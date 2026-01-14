@@ -941,7 +941,7 @@ if (isCurrentAffairPurchase) {
           <body>
             <div class="container">
               <div class="header">
-                <h1>Elite Academy Elite Academy Magazine 2024</h1>
+                <h1>Elite Academy Magazine 2024</h1>
                 <p style="margin: 0;">PSSSB & Punjab Exams</p>
               </div>
               
