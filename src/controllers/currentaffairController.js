@@ -30,7 +30,7 @@ const getPDFInfo = async (req, res, next) => {
       success: true,
       pdf: {
         name: "Elite Academy Magazine",
-        description: "Important Current Affairs Notes - PSSSB Exam Preparation Guide",
+        description: "Elite Academy Magazine 2024 - PSSSB Exam Preparation Guide",
         price: getPDFPrice(),
         totalPages: 215,
         features: [

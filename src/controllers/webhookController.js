@@ -917,7 +917,7 @@ if (isCurrentAffairPurchase) {
     emailPromises.push(
       sendEmail({
         to: purchase.userEmail,
-        subject: "Elite Academy Current Affairs 2024",
+        subject: "Elite Academy Magazine 2024",
         html: `
           <!DOCTYPE html>
           <html>
@@ -941,7 +941,7 @@ if (isCurrentAffairPurchase) {
           <body>
             <div class="container">
               <div class="header">
-                <h1>Elite Academy Current Affairs 2024</h1>
+                <h1>Elite Academy Elite Academy Magazine 2024</h1>
                 <p style="margin: 0;">PSSSB & Punjab Exams</p>
               </div>
               
@@ -1020,7 +1020,7 @@ if (isCurrentAffairPurchase) {
     emailPromises.push(
       sendEmail({
         to: admin.email,
-        subject: "📰 New Current Affairs Purchase",
+        subject: "📰 Elite Academy Magazine 2024 Purchase",
         html: `
           <!DOCTYPE html>
           <html>
@@ -1038,11 +1038,11 @@ if (isCurrentAffairPurchase) {
           <body>
             <div class="container">
               <div class="header">
-                <h2>📰 New Current Affairs Purchase</h2>
+                <h2>📰 Elite Academy Magazine 2024 Purchase</h2>
               </div>
               
               <div class="content">
-                <p>You have a new purchase of the <strong>Elite Academy Current Affairs 2024</strong>.</p>
+                <p>You have a new purchase of the <strong>Elite Academy Magazine 2024</strong>.</p>
                 
                 <table>
                   <tr>
