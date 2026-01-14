@@ -47,6 +47,7 @@ app.use("/api/bookings", require("./src/routes/bookingRoutes"));
 app.use("/api/payments", require("./src/routes/paymentRoutes"));
 app.use("/api/mentorship", require("./src/routes/mentorshipRoutes"));
 app.use("/api/pdf", require("./src/routes/pdfRoutes"));
+app.use("/api/currentaffair", require("./src/routes/currentaffair"));
 app.use("/api/cron", require("./src/routes/cronRoutes"));
 app.use("/api/typing", require("./src/routes/typingRoutes"));
 app.use("/api/polity", require("./src/routes/polityRoutes"));

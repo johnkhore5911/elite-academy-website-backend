@@ -14,6 +14,8 @@ const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
 const { sendBookEmail, sendPackageEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
+const CurrentAffair = require("../models/CurrentAffair");
+
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -103,6 +105,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
       const isMentorshipEnrollment = orderDetails?.notes?.type === "mentorship_enrollment" ||
                                      (await MentorshipEnrollment.findOne({ razorpayOrderId: orderId }));
+
+      const isCurrentAffairPurchase =
+      orderDetails?.notes?.type === "currentaffair_purchase" ||
+      (await CurrentAffair.findOne({ razorpayOrderId: orderId }));
 
         
     const isTypingPurchase =
@@ -831,6 +837,271 @@ if (isBookPurchase) {
         console.log("✅ PDF purchase webhook processed successfully:", purchase._id);
         return res.json({ status: "ok" });
       }
+
+
+      // Handle Current Affairs Purchase
+if (isCurrentAffairPurchase) {
+  console.log("📰 Processing Current Affairs purchase payment");
+
+  // Find purchase
+  let purchase = await CurrentAffair.findOne({ razorpayOrderId: orderId });
+
+  if (purchase) {
+    // Prevent duplicate processing
+    if (purchase.status === "confirmed") {
+      console.log("ℹ️ Current Affairs purchase already confirmed:", purchase._id);
+      return res.json({ status: "ok" });
+    }
+
+    // Update existing purchase
+    purchase.status = "confirmed";
+    purchase.razorpayPaymentId = paymentId;
+    await purchase.save();
+  } else {
+    // Create new purchase from order notes
+    if (!orderDetails || !orderDetails.notes) {
+      console.error("❌ Cannot create current affairs purchase: order details missing");
+      return res.status(400).json({ error: "Order details missing" });
+    }
+
+    const userFirebaseUid = orderDetails.notes.userFirebaseUid;
+    const userName = orderDetails.notes.userName;
+    const userEmail = orderDetails.notes.userEmail;
+
+    if (!userFirebaseUid || !userEmail) {
+      console.error("❌ Cannot create current affairs purchase: missing user info");
+      return res.status(400).json({ error: "User information missing" });
+    }
+
+    // Get current affairs price from environment
+    const getCurrentAffairPrice = () => {
+      const price = process.env.CurrentAffair_PRICE;
+      if (price) {
+        const parsedPrice = parseInt(price, 10);
+        if (!isNaN(parsedPrice) && parsedPrice > 0) {
+          return parsedPrice;
+        }
+      }
+      return 13; // Default price
+    };
+
+    purchase = new CurrentAffair({
+      userFirebaseUid: userFirebaseUid,
+      userName: userName,
+      userEmail: userEmail,
+      amount: getCurrentAffairPrice(),
+      razorpayOrderId: orderId,
+      razorpayPaymentId: paymentId,
+      status: "confirmed",
+    });
+
+    await purchase.save();
+    console.log("✅ Created current affairs purchase after payment:", purchase._id);
+  }
+
+  console.log("📧 Sending Current Affairs PDF email...");
+
+  // Get admin details
+  const admin = await User.findOne({ role: "admin" });
+
+  // ✅ SEND EMAILS
+  const emailPromises = [];
+
+  // Get Google Drive link from environment variable
+  const currentAffairPdfLink =
+    process.env.CURRENT_AFFAIR_PDF_GOOGLE_DRIVE_LINK ||
+    "https://drive.google.com/file/d/YOUR_DEFAULT_LINK/view?usp=sharing";
+
+  // Email to User with Google Drive download link (NO PDF attachment)
+  if (purchase.userEmail) {
+    emailPromises.push(
+      sendEmail({
+        to: purchase.userEmail,
+        subject: "📘 Elite Academy - Important Current Affairs Notes",
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+              .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+              .button { display: inline-block; background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+              .details { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; }
+              table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+              td { padding: 10px; border-bottom: 1px solid #ddd; }
+              .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+              .highlight { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+              .feature-list { list-style: none; padding: 0; }
+              .feature-list li { padding: 8px 0; padding-left: 25px; position: relative; }
+              .feature-list li:before { content: "✓"; position: absolute; left: 0; color: #28a745; font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>📰 Important Current Affairs Notes</h1>
+                <p style="margin: 0;">PSSSB & Punjab Exams</p>
+              </div>
+              
+              <div class="content">
+                <p>Dear <strong>${purchase.userName}</strong>,</p>
+                
+                <p>✅ <strong>Payment Confirmed!</strong> Download your PDF now.</p>
+                
+                <div class="highlight">
+                  <h3 style="margin-top: 0;">📚 What's Inside (215 Pages)</h3>
+                  <ul class="feature-list">
+                    <li>Important Days & Themes – 16 Pages</li>
+                    <li>Index – 31 Pages</li>
+                    <li>Military & Defence – 16 Pages</li>
+                    <li>Appointments – 30 Pages</li>
+                    <li>Sports – 35 Pages</li>
+                    <li>Awards & Honours – 60 Pages</li>
+                    <li>Nuclear Power Plants – 27 Pages</li>
+                  </ul>
+                </div>
+                
+                <div style="text-align: center;">
+                  <a href="${currentAffairPdfLink}" class="button">📥 Download PDF Now</a>
+                </div>
+                
+                <p style="font-size: 12px; color: #666;">If button doesn't work, copy this link:<br>
+                <a href="${currentAffairPdfLink}">${currentAffairPdfLink}</a></p>
+                
+                <div class="highlight" style="background: #d4edda; border-left-color: #28a745;">
+                  <h3 style="margin-top: 0;">❤️ A Noble Cause</h3>
+                  <p style="margin: 0;"><strong>100% of the money collected will be donated to Bhai Kanhaiya Ji Foundation.</strong></p>
+                  <p style="margin: 10px 0 0 0;">By purchasing this book, you are not only helping your exam preparation but also supporting a beautiful humanitarian cause. 🙏</p>
+                </div>
+                
+                <div class="details">
+                  <h3>Payment Details</h3>
+                  <table>
+                    <tr>
+                      <td><strong>Amount Paid</strong></td>
+                      <td>₹${purchase.amount}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Payment ID</strong></td>
+                      <td>${paymentId}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Date</strong></td>
+                      <td>${new Date(purchase.purchaseDate).toLocaleDateString('en-IN', { 
+                        timeZone: 'Asia/Kolkata', 
+                        day: 'numeric', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      })}</td>
+                    </tr>
+                  </table>
+                </div>
+                
+                <p>Best regards,<br><strong>Elite Academy Team</strong></p>
+                <p style="font-size: 12px; color: #666;">Join us in this beautiful cause. Learn • Prepare • Help Others 🌟</p>
+              </div>
+              
+              <div class="footer">
+                <p>This is an automated email. Please do not reply.</p>
+                <p>© ${new Date().getFullYear()} Elite Academy. All rights reserved.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+      })
+    );
+  }
+
+  // Email to Admin
+  if (admin && admin.email) {
+    emailPromises.push(
+      sendEmail({
+        to: admin.email,
+        subject: "📰 New Current Affairs Purchase",
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #28a745; color: white; padding: 20px; text-align: center; }
+              .content { background: #f9f9f9; padding: 20px; }
+              table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; }
+              th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+              th { background: #667eea; color: white; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h2>📰 New Current Affairs Purchase</h2>
+              </div>
+              
+              <div class="content">
+                <p>You have a new purchase of the <strong>Important Current Affairs Notes</strong>.</p>
+                
+                <table>
+                  <tr>
+                    <th>Detail</th>
+                    <th>Value</th>
+                  </tr>
+                  <tr>
+                    <td><strong>Customer Name</strong></td>
+                    <td>${purchase.userName}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Customer Email</strong></td>
+                    <td>${purchase.userEmail}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Amount</strong></td>
+                    <td>₹${purchase.amount}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Payment ID</strong></td>
+                    <td>${paymentId}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Purchase Date</strong></td>
+                    <td>${new Date(purchase.purchaseDate).toLocaleDateString('en-IN', { 
+                      timeZone: 'Asia/Kolkata', 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}</td>
+                  </tr>
+                </table>
+                
+                <p style="background: #d4edda; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0;">
+                  <strong>❤️ Noble Cause:</strong> This amount will be donated to Bhai Kanhaiya Ji Foundation.
+                </p>
+                
+                <p>Best regards,<br><strong>Elite Meet System</strong></p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+      })
+    );
+  }
+
+  // Send all emails
+  try {
+    await Promise.all(emailPromises);
+    console.log("✅ Current Affairs purchase emails sent successfully");
+  } catch (emailError) {
+    console.error("❌ Error sending current affairs purchase emails:", emailError);
+  }
+
+  return res.json({ status: "ok" });
+}
+
 
       if (isMentorshipEnrollment) {
         // Handle mentorship enrollment
