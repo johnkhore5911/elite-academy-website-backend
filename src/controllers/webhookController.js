@@ -917,7 +917,7 @@ if (isCurrentAffairPurchase) {
     emailPromises.push(
       sendEmail({
         to: purchase.userEmail,
-        subject: "📘 Elite Academy - Important Current Affairs Notes",
+        subject: "Elite Academy Current Affairs 2024",
         html: `
           <!DOCTYPE html>
           <html>
@@ -941,7 +941,7 @@ if (isCurrentAffairPurchase) {
           <body>
             <div class="container">
               <div class="header">
-                <h1>📰 Important Current Affairs Notes</h1>
+                <h1>Elite Academy Current Affairs 2024</h1>
                 <p style="margin: 0;">PSSSB & Punjab Exams</p>
               </div>
               
@@ -1042,7 +1042,7 @@ if (isCurrentAffairPurchase) {
               </div>
               
               <div class="content">
-                <p>You have a new purchase of the <strong>Important Current Affairs Notes</strong>.</p>
+                <p>You have a new purchase of the <strong>Elite Academy Current Affairs 2024</strong>.</p>
                 
                 <table>
                   <tr>
