@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
  */
 const sendEmail = async ({ to, subject, text, html }) => {
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM || `"Elite Academy" <noreply@eliteacademy.com>`,
+    from: '"Elite Academy" <support@eliteacademy.pro>',
     to,
     subject,
     text,
