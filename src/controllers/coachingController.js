@@ -34,7 +34,7 @@ exports.enrollAndCreateOrder = async (req, res) => {
 
     // 2. Save Enrollment Data (Pending)
     const newEnrollment = new CoachingEnrollment({
-      userFirebaseUid: req.user.uid,
+      userFirebaseUid: req.user.id,
       fullName,
       email,
       fatherName,
