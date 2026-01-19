@@ -405,7 +405,7 @@ const html = `
         
         <div style="background: #eef2ff; border: 1px dashed #4f46e5; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
           <h3 style="margin: 0; color: #4f46e5;">🚀 Batch Starts: 1st February, 2026</h3>
-          <p style="margin: 5px 0; font-size: 14px;">Your course access and mobile login will be activated on this date.</p>
+          <p style="margin: 5px 0; font-size: 14px;">Your course access on website and mobile login will be activated on this date.</p>
         </div>
 
         <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4f46e5;">
@@ -413,7 +413,7 @@ const html = `
           <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
           <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
           <p style="font-size: 13px; color: #ef4444; margin-top: 10px;">
-            <strong>Note:</strong> Login access will be enabled on <b>February 1st</b>. Please wait until then to log in to the "Elite Academy" app.
+            <strong>Note:</strong> Login access will be enabled on <b>February 1st</b>.
           </p>
         </div>
 
