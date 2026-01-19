@@ -392,21 +392,29 @@ const sendCoachingEmail = async (enrollment) => {
   const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
 
   // --- HTML TEMPLATE ---
-  const html = `
+const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center;">
-        <h1>🎓 Enrollment Confirmed!</h1>
+        <h1>🎓 Registration Completed!</h1>
         <p>Welcome to the Elite Academy Coaching Program</p>
       </div>
+      
       <div style="padding: 30px; color: #1f2937;">
         <p>Hi <strong>${enrollment.fullName}</strong>,</p>
-        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. You now have full access to our Online Coaching ecosystem.</p>
+        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. Your seat is officially reserved for the upcoming batch!</p>
         
+        <div style="background: #eef2ff; border: 1px dashed #4f46e5; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
+          <h3 style="margin: 0; color: #4f46e5;">🚀 Batch Starts: 1st February, 2026</h3>
+          <p style="margin: 5px 0; font-size: 14px;">Your course access and mobile login will be activated on this date.</p>
+        </div>
+
         <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4f46e5;">
           <h3 style="margin-top: 0; color: #4f46e5;">📱 Mobile App Login Details</h3>
           <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
           <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
-          <p style="font-size: 13px; color: #6b7280; margin-top: 10px;"><i>Use these details to log in to the "Elite Academy" app on Play Store.</i></p>
+          <p style="font-size: 13px; color: #ef4444; margin-top: 10px;">
+            <strong>Note:</strong> Login access will be enabled on <b>February 1st</b>. Please wait until then to log in to the "Elite Academy" app.
+          </p>
         </div>
 
         <h3>Student Profile Details:</h3>
@@ -416,13 +424,14 @@ const sendCoachingEmail = async (enrollment) => {
           <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Order ID:</strong> ${enrollment.razorpayOrderId}</li>
         </ul>
 
-        <p style="margin-top: 30px;">If you face any issues while logging in, please contact our support team immediately.</p>
+        <p style="margin-top: 30px;">We are excited to have you on board! If you have any questions before the batch starts, feel free to reach out.</p>
       </div>
+      
       <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
-        © 2025 Elite Academy | Your Success, Our Mission
+        © 2026 Elite Academy | Your Success, Our Mission
       </div>
     </div>
-  `;
+`;
 
   // 1. Send to Student
   await transporter.sendMail({
