@@ -53,6 +53,7 @@ app.use("/api/typing", require("./src/routes/typingRoutes"));
 app.use("/api/polity", require("./src/routes/polityRoutes"));
 app.use("/api/books", require("./src/routes/bookRoutes")); 
 app.use("/api/coaching", require("./src/routes/coachingRoutes")); 
+app.use("/api/admin", require("./src/routes/adminRoutes")); 
 
 // Error handling
 app.use((err, req, res, next) => {
