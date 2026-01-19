@@ -144,10 +144,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
     if (enrollment) {
       console.log(`✅ Enrollment confirmed for: ${enrollment.email}`);
-
+      const pdfLinks = getPDFLinks();
       // Call the helper function we just added to email.js
       try {
-        await sendCoachingEmail(enrollment);
+        await sendCoachingEmail(enrollment, pdfLinks, paymentId);
         console.log("📧 Success: Enrollment emails sent to User and Admin");
       } catch (emailErr) {
         console.error("❌ Email Error:", emailErr);

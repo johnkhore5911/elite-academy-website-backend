@@ -388,11 +388,97 @@ const sendPackageEmail = async (to, userName, packageName, packageInfo, books, p
 };
 
 
-const sendCoachingEmail = async (enrollment) => {
+// const sendCoachingEmail = async (enrollment) => {
+//   const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
+
+//   // --- HTML TEMPLATE ---
+// const html = `
+//     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+//       <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center;">
+//         <h1>🎓 Registration Completed!</h1>
+//         <p>Welcome to the Elite Academy Coaching Program</p>
+//       </div>
+      
+//       <div style="padding: 30px; color: #1f2937;">
+//         <p>Hi <strong>${enrollment.fullName}</strong>,</p>
+//         <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. Your seat is officially reserved for the upcoming batch!</p>
+        
+//         <div style="background: #eef2ff; border: 1px dashed #4f46e5; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
+//           <h3 style="margin: 0; color: #4f46e5;">🚀 Batch Starts: 1st February, 2026</h3>
+//           <p style="margin: 5px 0; font-size: 14px;">Your course access on website and mobile login will be activated on this date.</p>
+//         </div>
+
+//         <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4f46e5;">
+//           <h3 style="margin-top: 0; color: #4f46e5;">📱 Mobile App Login Details</h3>
+//           <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
+//           <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
+//           <p style="font-size: 13px; color: #ef4444; margin-top: 10px;">
+//             <strong>Note:</strong> Login access will be enabled on <b>February 1st</b>.
+//           </p>
+//         </div>
+
+//         <h3>Student Profile Details:</h3>
+//         <ul style="list-style: none; padding: 0;">
+//           <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Father's Name:</strong> ${enrollment.fatherName}</li>
+//           <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Mobile Number:</strong> ${enrollment.mobile}</li>
+//           <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Order ID:</strong> ${enrollment.razorpayOrderId}</li>
+//         </ul>
+
+//         <p style="margin-top: 30px;">We are excited to have you on board! If you have any questions before the batch starts, feel free to reach out.</p>
+//       </div>
+      
+//       <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
+//         © 2026 Elite Academy | Your Success, Our Mission
+//       </div>
+//     </div>
+// `;
+
+//   // 1. Send to Student
+//   await transporter.sendMail({
+//     from: process.env.EMAIL_FROM || '"Elite Academy" <noreply@eliteacademy.com>',
+//     to: enrollment.email,
+//     subject: "🎉 Welcome to Elite Academy - Enrollment Successful",
+//     html: html
+//   });
+
+//   // 2. Send to Admin (Detailed Report)
+//   await transporter.sendMail({
+//     from: '"System Notification" <noreply@eliteacademy.com>',
+//     to: adminEmail,
+//     subject: `🚀 NEW COACHING ENROLLMENT: ${enrollment.fullName}`,
+//     html: `<h3>New Enrollment Details:</h3>` + html // Reusing the same HTML for admin
+//   });
+// };
+
+
+
+
+
+// Helper to get book display name
+
+
+/**
+ * Sends coaching confirmation with App Login + 8 Book Links
+ */
+const sendCoachingEmail = async (enrollment, pdfLinks, paymentId) => {
   const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
 
-  // --- HTML TEMPLATE ---
-const html = `
+  // --- GENERATE BOOKS DOWNLOAD SECTION ---
+  // This loops through the pdfLinks object and creates a nice list of buttons
+  const booksHtml = Object.entries(pdfLinks).map(([key, link]) => {
+    // Reusing your existing helpers to get names (e.g., 'polity' -> 'Polity')
+    const bookName = typeof getBookDisplayName === 'function' ? getBookDisplayName(key) : key;
+    const emoji = typeof getBookEmoji === 'function' ? getBookEmoji(key) : '📚';
+    
+    return `
+      <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px; color: #1f2937;">${emoji} <strong>${bookName}</strong></span>
+        <a href="${link}" style="background: #4f46e5; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold;">Download PDF</a>
+      </div>
+    `;
+  }).join('');
+
+  const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center;">
         <h1>🎓 Registration Completed!</h1>
@@ -401,11 +487,17 @@ const html = `
       
       <div style="padding: 30px; color: #1f2937;">
         <p>Hi <strong>${enrollment.fullName}</strong>,</p>
-        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. Your seat is officially reserved for the upcoming batch!</p>
+        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. Your seat is officially reserved!</p>
         
         <div style="background: #eef2ff; border: 1px dashed #4f46e5; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
           <h3 style="margin: 0; color: #4f46e5;">🚀 Batch Starts: 1st February, 2026</h3>
-          <p style="margin: 5px 0; font-size: 14px;">Your course access on website and mobile login will be activated on this date.</p>
+          <p style="margin: 5px 0; font-size: 14px;">Your course access will be activated on this date.</p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📚 Your 8 Bonus Books (Immediate Access)</h3>
+          <p style="font-size: 14px; color: #475569; margin-bottom: 15px;">As part of your coaching, you get instant access to our complete book library:</p>
+          ${booksHtml}
         </div>
 
         <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4f46e5;">
@@ -413,48 +505,41 @@ const html = `
           <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
           <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
           <p style="font-size: 13px; color: #ef4444; margin-top: 10px;">
-            <strong>Note:</strong> Login access will be enabled on <b>February 1st</b>.
+            <strong>Note:</strong> App login access will be enabled on <b>February 1st</b>.
           </p>
         </div>
 
-        <h3>Student Profile Details:</h3>
+        <h3>Student Profile:</h3>
         <ul style="list-style: none; padding: 0;">
           <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Father's Name:</strong> ${enrollment.fatherName}</li>
-          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Mobile Number:</strong> ${enrollment.mobile}</li>
-          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Order ID:</strong> ${enrollment.razorpayOrderId}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Mobile:</strong> ${enrollment.mobile}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Payment ID:</strong> ${paymentId}</li>
         </ul>
-
-        <p style="margin-top: 30px;">We are excited to have you on board! If you have any questions before the batch starts, feel free to reach out.</p>
       </div>
       
       <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
         © 2026 Elite Academy | Your Success, Our Mission
       </div>
     </div>
-`;
+  `;
 
   // 1. Send to Student
   await transporter.sendMail({
     from: process.env.EMAIL_FROM || '"Elite Academy" <noreply@eliteacademy.com>',
     to: enrollment.email,
-    subject: "🎉 Welcome to Elite Academy - Enrollment Successful",
+    subject: "🎉 Welcome to Elite Academy - Enrollment Successful + 8 Books",
     html: html
   });
 
-  // 2. Send to Admin (Detailed Report)
+  // 2. Send to Admin
   await transporter.sendMail({
     from: '"System Notification" <noreply@eliteacademy.com>',
     to: adminEmail,
     subject: `🚀 NEW COACHING ENROLLMENT: ${enrollment.fullName}`,
-    html: `<h3>New Enrollment Details:</h3>` + html // Reusing the same HTML for admin
+    html: `<h3>Admin Report:</h3>` + html
   });
 };
 
-
-
-
-
-// Helper to get book display name
 const getBookDisplayName = (bookType) => {
   const names = {
     'polity': 'Polity',
