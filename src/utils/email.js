@@ -388,6 +388,60 @@ const sendPackageEmail = async (to, userName, packageName, packageInfo, books, p
 };
 
 
+const sendCoachingEmail = async (enrollment) => {
+  const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
+
+  // --- HTML TEMPLATE ---
+  const html = `
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center;">
+        <h1>🎓 Enrollment Confirmed!</h1>
+        <p>Welcome to the Elite Academy Coaching Program</p>
+      </div>
+      <div style="padding: 30px; color: #1f2937;">
+        <p>Hi <strong>${enrollment.fullName}</strong>,</p>
+        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. You now have full access to our Online Coaching ecosystem.</p>
+        
+        <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #4f46e5;">
+          <h3 style="margin-top: 0; color: #4f46e5;">📱 Mobile App Login Details</h3>
+          <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
+          <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
+          <p style="font-size: 13px; color: #6b7280; margin-top: 10px;"><i>Use these details to log in to the "Elite Academy" app on Play Store.</i></p>
+        </div>
+
+        <h3>Student Profile Details:</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Father's Name:</strong> ${enrollment.fatherName}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Mobile Number:</strong> ${enrollment.mobile}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Order ID:</strong> ${enrollment.razorpayOrderId}</li>
+        </ul>
+
+        <p style="margin-top: 30px;">If you face any issues while logging in, please contact our support team immediately.</p>
+      </div>
+      <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
+        © 2025 Elite Academy | Your Success, Our Mission
+      </div>
+    </div>
+  `;
+
+  // 1. Send to Student
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || '"Elite Academy" <noreply@eliteacademy.com>',
+    to: enrollment.email,
+    subject: "🎉 Welcome to Elite Academy - Enrollment Successful",
+    html: html
+  });
+
+  // 2. Send to Admin (Detailed Report)
+  await transporter.sendMail({
+    from: '"System Notification" <noreply@eliteacademy.com>',
+    to: adminEmail,
+    subject: `🚀 NEW COACHING ENROLLMENT: ${enrollment.fullName}`,
+    html: `<h3>New Enrollment Details:</h3>` + html // Reusing the same HTML for admin
+  });
+};
+
+
 
 
 
@@ -427,5 +481,6 @@ module.exports = {
   sendEmailWithPDF,
   sendBookingEmails,    // ✅ This is the correct name (not sendBookingConfirmation)
   sendBookEmail,        // ✅ NEW - for single books
-  sendPackageEmail      // ✅ NEW - for packages
+  sendPackageEmail,      // ✅ NEW - for packages
+  sendCoachingEmail
 };

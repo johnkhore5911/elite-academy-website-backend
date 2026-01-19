@@ -12,10 +12,10 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
-
+const CoachingEnrollment = require("../models/CoachingEnrollment");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -126,6 +126,44 @@ const handleRazorpayWebhook = async (req, res) => {
   orderDetails?.notes?.purchaseType === "package" ||
   (await BookPurchase.findOne({ orderId: orderId }));
 
+  const isCoachingPurchase = orderDetails?.notes?.purchaseType === "coaching" || 
+                           (await CoachingEnrollment.findOne({ razorpayOrderId: orderId }));                
+
+  if (isCoachingPurchase) {
+    console.log("📘 Processing Online Coaching enrollment payment");
+
+    const enrollment = await CoachingEnrollment.findOneAndUpdate(
+      { razorpayOrderId: orderId },
+      { 
+        status: "confirmed", 
+        razorpayPaymentId: paymentId,
+        expiresAt: null 
+      },
+      { new: true }
+    );
+
+    if (enrollment) {
+      console.log(`✅ Enrollment confirmed for: ${enrollment.email}`);
+
+      // Call the helper function we just added to email.js
+      try {
+        await sendCoachingEmail(enrollment);
+        console.log("📧 Success: Enrollment emails sent to User and Admin");
+      } catch (emailErr) {
+        console.error("❌ Email Error:", emailErr);
+      }
+    }
+
+  if (enrollment) {
+    console.log(`✅ Coaching Enrollment Confirmed: ${enrollment.email}`);
+    try {
+      await sendCoachingConfirmationEmail(enrollment);
+      console.log("📧 Coaching confirmation emails sent successfully");
+    } catch (emailErr) {
+      console.error("❌ Error sending coaching emails:", emailErr);
+    }
+  }
+}
 
 // Add this handler after the PDF purchase handler
 // Handle Polity Purchase

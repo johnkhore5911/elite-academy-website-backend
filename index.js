@@ -52,6 +52,7 @@ app.use("/api/cron", require("./src/routes/cronRoutes"));
 app.use("/api/typing", require("./src/routes/typingRoutes"));
 app.use("/api/polity", require("./src/routes/polityRoutes"));
 app.use("/api/books", require("./src/routes/bookRoutes")); 
+app.use("/api/coaching", require("./src/routes/coachingRoutes")); 
 
 // Error handling
 app.use((err, req, res, next) => {
