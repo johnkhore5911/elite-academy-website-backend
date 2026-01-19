@@ -533,7 +533,7 @@ const sendCoachingEmail = async (enrollment, pdfLinks, paymentId) => {
 
   // 2. Send to Admin
   await transporter.sendMail({
-    from: '"System Notification" <noreply@eliteacademy.com>',
+    from: '"Elite Academy" <support@eliteacademy.pro>',
     to: adminEmail,
     subject: `🚀 NEW COACHING ENROLLMENT: ${enrollment.fullName}`,
     html: `<h3>Admin Report:</h3>` + html
