@@ -154,15 +154,15 @@ const handleRazorpayWebhook = async (req, res) => {
       }
     }
 
-  if (enrollment) {
-    console.log(`✅ Coaching Enrollment Confirmed: ${enrollment.email}`);
-    try {
-      await sendCoachingConfirmationEmail(enrollment);
-      console.log("📧 Coaching confirmation emails sent successfully");
-    } catch (emailErr) {
-      console.error("❌ Error sending coaching emails:", emailErr);
-    }
-  }
+  // if (enrollment) {
+  //   console.log(`✅ Coaching Enrollment Confirmed: ${enrollment.email}`);
+  //   try {
+  //     await sendCoachingConfirmationEmail(enrollment);
+  //     console.log("📧 Coaching confirmation emails sent successfully");
+  //   } catch (emailErr) {
+  //     console.error("❌ Error sending coaching emails:", emailErr);
+  //   }
+  // }
 }
 
 // Add this handler after the PDF purchase handler
