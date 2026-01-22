@@ -12,10 +12,11 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail,sendCoachingEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
+const CrashCourse = require("../models/CrashCourse");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -163,6 +164,35 @@ const handleRazorpayWebhook = async (req, res) => {
   //     console.error("❌ Error sending coaching emails:", emailErr);
   //   }
   // }
+}
+
+// Handle Crash Course Enrollment
+const isCrashCoursePurchase = orderDetails?.notes?.purchaseType === "crash-course" || 
+                             (await CrashCourse.findOne({ razorpayOrderId: orderId }));
+
+if (isCrashCoursePurchase) {
+  console.log("🚀 Processing Crash Course enrollment payment");
+
+  const enrollment = await CrashCourse.findOneAndUpdate(
+    { razorpayOrderId: orderId },
+    { 
+      status: "confirmed", 
+      razorpayPaymentId: paymentId,
+      expiresAt: null 
+    },
+    { new: true }
+  );
+
+  if (enrollment) {
+    console.log(`✅ Crash Course enrollment confirmed for: ${enrollment.email}`);
+    const pdfLinks = getPDFLinks();
+    try {
+      await sendCrashCourseEmail(enrollment, pdfLinks, paymentId);
+      console.log("📧 Success: Crash Course emails sent to User and Admin");
+    } catch (emailErr) {
+      console.error("❌ Email Error:", emailErr);
+    }
+  }
 }
 
 // Add this handler after the PDF purchase handler

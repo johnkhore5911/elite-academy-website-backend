@@ -569,6 +569,102 @@ const getBookEmoji = (bookType) => {
   return emojis[bookType] || '📚';
 };
 
+/**
+ * Sends crash course confirmation with App Login + 8 Book Links
+ */
+const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
+  const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
+
+  // --- GENERATE BOOKS DOWNLOAD SECTION ---
+  const booksHtml = Object.entries(pdfLinks).map(([key, link]) => {
+    const bookName = typeof getBookDisplayName === 'function' ? getBookDisplayName(key) : key;
+    const emoji = typeof getBookEmoji === 'function' ? getBookEmoji(key) : '📚';
+    
+    return `
+      <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px; color: #1f2937;">${emoji} <strong>${bookName}</strong></span>
+        <a href="${link}" style="background: #4f46e5; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold;">Download PDF</a>
+      </div>
+    `;
+  }).join('');
+
+  const html = `
+    <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 30px; text-align: center;">
+        <h1>🚀 Crash Course Registration Complete!</h1>
+        <p>Welcome to the Elite Academy Crash Course Program</p>
+      </div>
+      
+      <div style="padding: 30px; color: #1f2937;">
+        <p>Hi <strong>${enrollment.fullName}</strong>,</p>
+        <p>Your payment of <strong>₹${enrollment.amount}</strong> was successful. Your seat is officially reserved for the crash course!</p>
+        
+        <div style="background: #fed7aa; border: 1px dashed #f97316; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
+          <h3 style="margin: 0; color: #c2410c;">🎯 Program Starts: 1st February, 2026</h3>
+          <p style="margin: 5px 0; font-size: 14px;">Your course access will be activated on this date.</p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📚 Your 8 Bonus Books (Immediate Access)</h3>
+          <p style="font-size: 14px; color: #475569; margin-bottom: 15px;">As part of your crash course, you get instant access to our complete book library:</p>
+          ${booksHtml}
+        </div>
+
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #92400e;">⚡ What's Included</h3>
+          <ul style="margin: 10px 0; padding-left: 20px; color: #1f2937;">
+            <li style="margin: 8px 0;">✅ Live + Recorded Classes</li>
+            <li style="margin: 8px 0;">✅ Topic-wise Study Materials</li>
+            <li style="margin: 8px 0;">✅ 23,000+ PYQs with Solutions</li>
+            <li style="margin: 8px 0;">✅ Progress Tracker App</li>
+            <li style="margin: 8px 0;">✅ 1-Year Validity on Recordings</li>
+          </ul>
+        </div>
+
+        <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #f97316;">
+          <h3 style="margin-top: 0; color: #f97316;">📱 Mobile App Login Details</h3>
+          <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
+          <p style="margin: 5px 0;"><strong>Password:</strong> ${enrollment.appPassword}</p>
+          <p style="font-size: 13px; color: #ef4444; margin-top: 10px;">
+            <strong>Note:</strong> App login access will be enabled on <b>February 1st</b>.
+          </p>
+        </div>
+
+        <h3>Student Profile:</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Father's Name:</strong> ${enrollment.fatherName}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Mobile:</strong> ${enrollment.mobile}</li>
+          <li style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Payment ID:</strong> ${paymentId}</li>
+        </ul>
+
+        <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 13px; color: #64748b;">
+          💡 <strong>Tip:</strong> Save this email to access all your PDFs and login details anytime.
+        </p>
+      </div>
+      
+      <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
+        © 2026 Elite Academy | Your Success, Our Mission 🎓
+      </div>
+    </div>
+  `;
+
+  // 1. Send to Student
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || '"Elite Academy" <noreply@eliteacademy.com>',
+    to: enrollment.email,
+    subject: "🚀 Welcome to Crash Course - Registration Successful + 8 Books",
+    html: html
+  });
+
+  // 2. Send to Admin
+  await transporter.sendMail({
+    from: '"Elite Academy" <support@eliteacademy.pro>',
+    to: adminEmail,
+    subject: `🎯 NEW CRASH COURSE ENROLLMENT: ${enrollment.fullName}`,
+    html: `<h3>Admin Report:</h3>` + html
+  });
+};
+
 // ✅ CORRECT EXPORT
 module.exports = {
   sendEmail,
@@ -576,5 +672,6 @@ module.exports = {
   sendBookingEmails,    // ✅ This is the correct name (not sendBookingConfirmation)
   sendBookEmail,        // ✅ NEW - for single books
   sendPackageEmail,      // ✅ NEW - for packages
-  sendCoachingEmail
+  sendCoachingEmail,
+  sendCrashCourseEmail   // ✅ NEW - for crash course
 };
