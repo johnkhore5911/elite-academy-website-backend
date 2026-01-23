@@ -20,6 +20,15 @@ const getLatestClass = async (req, res, next) => {
   }
 };
 
+const getAllClasses = async (req, res, next) => {
+  try {
+    // Fetch all active videos, newest first
+    const classes = await Coaching.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json(classes);
+  } catch (err) {
+    next(err);
+  }
+};
 /**
  * POST /api/coaching
  * Admin only - Create a new coaching video entry
@@ -67,5 +76,6 @@ const deleteCoachingVideo = async (req, res, next) => {
 module.exports = {
   getLatestClass,
   createCoachingVideo,
-  deleteCoachingVideo
+  deleteCoachingVideo,
+  getAllClasses
 };
