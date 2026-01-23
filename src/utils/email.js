@@ -591,7 +591,7 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
   const html = `
     <div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
       <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; padding: 30px; text-align: center;">
-        <h1>🚀 Crash Course Registration Complete!</h1>
+        <h1>Crash Course Registration Complete!</h1>
         <p>Welcome to the Elite Academy Crash Course Program</p>
       </div>
       

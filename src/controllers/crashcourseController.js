@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
 exports.getInfo = async (req, res) => {
   res.json({
     package: {
-      name: "Online Crash Course Program starting from 1st Feb",
+      name: "⏰ 5 Months Online Crash Course Program starting from 1st Feb",
       price: process.env.CrashCourse_PRICE || 4999,
       originalPrice: 6999,
       description: "Prepare smart with live + recorded classes and 23,000+ PYQs."
