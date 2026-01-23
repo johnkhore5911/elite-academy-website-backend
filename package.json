@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "fix-indexes": "node scripts/fixIndexes.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +19,7 @@
     "express": "^5.2.1",
     "firebase-admin": "^13.6.0",
     "googleapis": "^167.0.0",
+    "jsonwebtoken": "^9.1.2",
     "mongoose": "^9.0.0",
     "morgan": "^1.10.1",
     "node-cron": "^4.2.1",

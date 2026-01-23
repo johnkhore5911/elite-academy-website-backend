@@ -2,6 +2,7 @@
 
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 /**
  * POST /api/auth/sync
@@ -100,6 +101,17 @@ const manualSignup = async (req, res, next) => {
       role: 'user'
     });
 
+    // Generate JWT token for manual auth
+    const token = jwt.sign(
+      {
+        userId: user._id.toString(),
+        email: user.email,
+        isManualAuth: true
+      },
+      process.env.JWT_SECRET || 'elite-academy-secret-key-2025',
+      { expiresIn: '7d' }
+    );
+
     console.log('✅ User created manually:', {
       mongoId: user._id,
       email: user.email,
@@ -109,6 +121,7 @@ const manualSignup = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Signup successful",
+      token,
       user: {
         id: user._id.toString(),
         email: user.email,
@@ -164,6 +177,17 @@ const manualLogin = async (req, res, next) => {
       });
     }
 
+    // Generate JWT token for manual auth
+    const token = jwt.sign(
+      {
+        userId: user._id.toString(),
+        email: user.email,
+        isManualAuth: true
+      },
+      process.env.JWT_SECRET || 'elite-academy-secret-key-2025',
+      { expiresIn: '7d' }
+    );
+
     console.log('✅ User logged in manually:', {
       mongoId: user._id,
       email: user.email,
@@ -172,6 +196,7 @@ const manualLogin = async (req, res, next) => {
     res.json({
       success: true,
       message: "Login successful",
+      token,
       user: {
         id: user._id.toString(),
         email: user.email,

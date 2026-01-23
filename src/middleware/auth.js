@@ -2,9 +2,10 @@
 
 const admin = require("../config/firebase-admin");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 /**
- * Verifies Firebase idToken sent in Authorization header:
+ * Verifies Firebase idToken OR Manual JWT token sent in Authorization header:
  * Authorization: Bearer <token>
  */
 const auth = async (req, res, next) => {
@@ -16,24 +17,70 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ error: "No token provided" });
     }
 
-    // Verify Firebase token
-    const decoded = await admin.auth().verifyIdToken(token);
-    
-    // Check if user already exists in MongoDB
-    let user = await User.findOne({ firebaseUid: decoded.uid });
+    console.log('🔍 Received token (first 50 chars):', token.substring(0, 50) + '...');
 
-    // Attach Firebase decoded info to req.user for authController to use
-    req.user = {
-      id: decoded.uid, // This is the Firebase UID!
-      email: decoded.email,
-      name: decoded.name || decoded.display_name,
-      photoUrl: decoded.picture,
-      role: user ? user.role : 'user'
-    };
+    let decoded;
+    let isManualAuth = false;
+
+    try {
+      // Try to verify as Firebase token first
+      decoded = await admin.auth().verifyIdToken(token);
+      console.log('✅ Firebase token verified');
+    } catch (firebaseError) {
+      console.log('Firebase token verification failed, trying manual auth...');
+      console.log('Firebase error:', firebaseError.message);
+      
+      // If Firebase verification fails, try manual JWT token
+      try {
+        const jwtSecret = process.env.JWT_SECRET || 'elite-academy-secret-key-2025';
+        decoded = jwt.verify(token, jwtSecret);
+        isManualAuth = true;
+        console.log('✅ Manual JWT token verified');
+        console.log('Decoded manual token:', { userId: decoded.userId, email: decoded.email });
+      } catch (jwtError) {
+        console.error("❌ JWT verification failed:", jwtError.message);
+        console.error("Both token verifications failed");
+        return res.status(401).json({ error: "Invalid token" });
+      }
+    }
+
+    if (isManualAuth) {
+      // Manual auth - user is in MongoDB with _id
+      const user = await User.findById(decoded.userId);
+      
+      if (!user) {
+        console.error("❌ User not found in MongoDB:", decoded.userId);
+        return res.status(401).json({ error: "User not found" });
+      }
+
+      req.user = {
+        id: user._id.toString(), // MongoDB ID for manual auth
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isManualAuth: true
+      };
+      console.log('✅ Manual auth user set:', req.user.email);
+    } else {
+      // Firebase auth
+      // Check if user already exists in MongoDB
+      let user = await User.findOne({ firebaseUid: decoded.uid });
+
+      // Attach Firebase decoded info to req.user for authController to use
+      req.user = {
+        id: decoded.uid, // This is the Firebase UID!
+        email: decoded.email,
+        name: decoded.name || decoded.display_name,
+        photoUrl: decoded.picture,
+        role: user ? user.role : 'user',
+        isManualAuth: false
+      };
+      console.log('✅ Firebase auth user set:', req.user.email);
+    }
 
     next();
   } catch (err) {
-    console.error("Auth error:", err);
+    console.error("❌ Auth middleware error:", err);
     return res.status(401).json({ error: "Invalid token" });
   }
 };
