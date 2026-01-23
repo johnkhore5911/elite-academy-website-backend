@@ -11,6 +11,6 @@ router.get("/latest",auth, getLatestClass);
 router.post("/", auth, createCoachingVideo);
 // router.delete("/:id", auth, deleteCoachingVideo); // New delete route
 
-router.get("/all", auth, getAllClasses);
+router.get("/all", getAllClasses);
 
 module.exports = router;

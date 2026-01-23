@@ -22,6 +22,7 @@ const getLatestClass = async (req, res, next) => {
 
 const getAllClasses = async (req, res, next) => {
   try {
+    console.log("api called!!!!")
     // Fetch all active videos, newest first
     const classes = await Coaching.find({ isActive: true }).sort({ createdAt: -1 });
     res.json(classes);
