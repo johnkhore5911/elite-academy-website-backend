@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 const { getLatestClass, createCoachingVideo,deleteCoachingVideo,getAllClasses } = require("../controllers/videocoachingController");
 
 // Public route to get the video for the student dashboard
-router.get("/latest",auth, getLatestClass);
+router.get("/latest", getLatestClass);
 
 // Protected admin route to upload/set the video ID
 router.post("/", auth, createCoachingVideo);
