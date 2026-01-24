@@ -610,17 +610,6 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
           ${booksHtml}
         </div>
 
-        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #92400e;">⚡ What's Included</h3>
-          <ul style="margin: 10px 0; padding-left: 20px; color: #1f2937;">
-            <li style="margin: 8px 0;">✅ Live + Recorded Classes</li>
-            <li style="margin: 8px 0;">✅ Topic-wise Study Materials</li>
-            <li style="margin: 8px 0;">✅ 23,000+ PYQs with Solutions</li>
-            <li style="margin: 8px 0;">✅ Progress Tracker App</li>
-            <li style="margin: 8px 0;">✅ 1-Year Validity on Recordings</li>
-          </ul>
-        </div>
-
         <div style="background: #f3f4f6; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #f97316;">
           <h3 style="margin-top: 0; color: #f97316;">📱 Mobile App Login Details</h3>
           <p style="margin: 5px 0;"><strong>User ID/Email:</strong> ${enrollment.email}</p>
@@ -674,11 +663,11 @@ async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, ap
           <h3 style="color: #2563eb; margin-top: 24px;">📱 Download the App</h3>
           <p style="margin: 12px 0;">Get started by downloading our app:</p>
           <div style="margin: 20px 0;">
-            <a href="https://play.google.com/store/apps/details?id=YOUR_APP_ID" 
+            <a href="https://play.google.com/store/apps/details?id=com.johnnykhore.eliteacademy&hl=en" 
                style="display: inline-block; background: #34d399; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">
               📱 Download on Play Store
             </a>
-            <a href="https://apps.apple.com/app/YOUR_APP_ID" 
+            <a href="https://apps.apple.com/in/app/elite-academy-mock-tests/id6746954938" 
                style="display: inline-block; background: #60a5fa; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
               📱 Download on App Store
             </a>
@@ -695,8 +684,8 @@ async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, ap
             <h3 style="color: #92400e; margin-top: 0;">🏢 Visit Our Institute</h3>
             <p style="color: #78350f; margin: 8px 0;">
               <strong>Elite Academy</strong><br>
-              [Your Institute Address]<br>
-              Contact: [Institute Phone Number]
+              SCO-212 Sector 24D Chandigarh<br>
+              Contact: 7696954686
             </p>
             <p style="color: #78350f; margin: 8px 0;">
               <strong>Timing:</strong> Monday to Saturday, 9:00 AM - 6:00 PM
@@ -803,18 +792,6 @@ async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, ap
             </table>
           </div>
 
-          <!-- What's Included -->
-          <div style="margin: 24px 0;">
-            <h3 style="color: #111827; font-size: 18px;">📚 What's Included</h3>
-            <ul style="color: #374151; line-height: 2; padding-left: 20px;">
-              <li>Weekly mock tests with detailed solutions</li>
-              <li>23,000+ previous year questions</li>
-              <li>Performance analytics and progress tracking</li>
-              <li>Section-wise and subject-wise analysis</li>
-              <li>Expert guidance and doubt resolution</li>
-            </ul>
-          </div>
-
           <!-- Support Section -->
           <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
             <h3 style="color: #1e40af; margin-top: 0; font-size: 16px;">💬 Need Help?</h3>
@@ -823,7 +800,7 @@ async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, ap
             </p>
             <p style="color: #1e40af; margin: 8px 0;">
               📧 Email: <a href="mailto:2025eliteacademy@gmail.com" style="color: #2563eb;">2025eliteacademy@gmail.com</a><br>
-              📱 WhatsApp: [Your WhatsApp Number]
+              📱 WhatsApp: 7696954686
             </p>
           </div>
 
@@ -876,16 +853,10 @@ ${mode === "online"
 - Amount Paid: ₹${amount}
 - Payment ID: ${paymentId}
 
-📚 What's Included:
-- Weekly mock tests with detailed solutions
-- 23,000+ previous year questions
-- Performance analytics and progress tracking
-- Section-wise and subject-wise analysis
-- Expert guidance and doubt resolution
 
 Need Help?
 Email: 2025eliteacademy@gmail.com
-WhatsApp: [Your WhatsApp Number]
+WhatsApp: 7696954686
 
 Best regards,
 Elite Academy Team
