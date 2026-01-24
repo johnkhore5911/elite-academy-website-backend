@@ -665,6 +665,239 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
   });
 };
 
+async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, appPassword, amount, paymentId, mode, fatherName }) {
+  const modeInfo = mode === "online" 
+    ? {
+        title: "Online Test Series",
+        accessInfo: "You can access the test series on your mobile device using the Elite Academy app.",
+        downloadSection: `
+          <h3 style="color: #2563eb; margin-top: 24px;">📱 Download the App</h3>
+          <p style="margin: 12px 0;">Get started by downloading our app:</p>
+          <div style="margin: 20px 0;">
+            <a href="https://play.google.com/store/apps/details?id=YOUR_APP_ID" 
+               style="display: inline-block; background: #34d399; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">
+              📱 Download on Play Store
+            </a>
+            <a href="https://apps.apple.com/app/YOUR_APP_ID" 
+               style="display: inline-block; background: #60a5fa; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+              📱 Download on App Store
+            </a>
+          </div>
+        `,
+        instructionsIcon: "📱",
+        instructionsText: "Login to the app using your credentials and start taking tests from anywhere!"
+      }
+    : {
+        title: "Offline Test Series",
+        accessInfo: "You can give tests at our institute. Please visit the institute with your enrollment details.",
+        downloadSection: `
+          <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+            <h3 style="color: #92400e; margin-top: 0;">🏢 Visit Our Institute</h3>
+            <p style="color: #78350f; margin: 8px 0;">
+              <strong>Elite Academy</strong><br>
+              [Your Institute Address]<br>
+              Contact: [Institute Phone Number]
+            </p>
+            <p style="color: #78350f; margin: 8px 0;">
+              <strong>Timing:</strong> Monday to Saturday, 9:00 AM - 6:00 PM
+            </p>
+          </div>
+        `,
+        instructionsIcon: "🏢",
+        instructionsText: "Visit the institute and login at the test center using your credentials."
+      };
+
+  const subject = `🎉 Enrollment Confirmed - Weekly Test Series (${modeInfo.title})`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 28px;">✅ Enrollment Confirmed!</h1>
+          <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">Welcome to Weekly Test Series</p>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding: 40px 30px;">
+          
+          <p style="font-size: 16px; color: #374151; line-height: 1.6;">
+            Dear <strong>${fullName}</strong>,
+          </p>
+
+          <p style="font-size: 16px; color: #374151; line-height: 1.6;">
+            Congratulations! 🎉 Your payment has been confirmed and you're now enrolled in the <strong>${modeInfo.title}</strong>.
+          </p>
+
+          <!-- Login Credentials Box -->
+          <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 12px; padding: 24px; margin: 24px 0; border: 2px solid #667eea;">
+            <h2 style="color: #667eea; margin-top: 0; font-size: 20px;">🔐 Your Login Credentials</h2>
+            
+            <div style="background: white; padding: 16px; border-radius: 8px; margin: 12px 0;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Email:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Password:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500; font-family: monospace; background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${appPassword}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Mobile:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500;">${mobile}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 16px;">
+              <p style="margin: 0; color: #92400e; font-size: 14px;">
+                ⚠️ <strong>Important:</strong> Please keep these credentials safe. You'll need them to access your tests.
+              </p>
+            </div>
+          </div>
+
+          <!-- Mode Specific Instructions -->
+          <div style="margin: 24px 0;">
+            <h3 style="color: #111827; font-size: 18px;">${modeInfo.instructionsIcon} How to Access</h3>
+            <p style="color: #374151; line-height: 1.6; margin: 12px 0;">
+              ${modeInfo.accessInfo}
+            </p>
+            ${modeInfo.downloadSection}
+            <p style="color: #374151; line-height: 1.6; margin: 12px 0;">
+              ${modeInfo.instructionsText}
+            </p>
+          </div>
+
+          <!-- Enrollment Details -->
+          <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
+            <h3 style="color: #111827; margin-top: 0; font-size: 18px;">📋 Enrollment Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Student Name</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${fullName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Father's Name</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${fatherName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Mode</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${modeInfo.title}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Amount Paid</td>
+                <td style="padding: 12px 0; color: #059669; text-align: right; font-weight: 600;">₹${amount}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; color: #6b7280;">Payment ID</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-size: 12px; font-family: monospace;">${paymentId}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- What's Included -->
+          <div style="margin: 24px 0;">
+            <h3 style="color: #111827; font-size: 18px;">📚 What's Included</h3>
+            <ul style="color: #374151; line-height: 2; padding-left: 20px;">
+              <li>Weekly mock tests with detailed solutions</li>
+              <li>23,000+ previous year questions</li>
+              <li>Performance analytics and progress tracking</li>
+              <li>Section-wise and subject-wise analysis</li>
+              <li>Expert guidance and doubt resolution</li>
+            </ul>
+          </div>
+
+          <!-- Support Section -->
+          <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
+            <h3 style="color: #1e40af; margin-top: 0; font-size: 16px;">💬 Need Help?</h3>
+            <p style="color: #1e40af; margin: 8px 0; line-height: 1.6;">
+              If you face any issues logging in or have questions, feel free to reach out to us:
+            </p>
+            <p style="color: #1e40af; margin: 8px 0;">
+              📧 Email: <a href="mailto:2025eliteacademy@gmail.com" style="color: #2563eb;">2025eliteacademy@gmail.com</a><br>
+              📱 WhatsApp: [Your WhatsApp Number]
+            </p>
+          </div>
+
+          <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-top: 24px;">
+            Best regards,<br>
+            <strong>Elite Academy Team</strong>
+          </p>
+
+          <p style="font-size: 14px; color: #6b7280; margin-top: 24px;">
+            🌟 All the best for your exam preparation! We're here to help you succeed.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
+            © 2026 Elite Academy. All rights reserved.
+          </p>
+          <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
+            This is an automated email. Please do not reply directly to this message.
+          </p>
+        </div>
+
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+Enrollment Confirmed - Weekly Test Series (${modeInfo.title})
+
+Dear ${fullName},
+
+Congratulations! Your payment has been confirmed and you're now enrolled in the ${modeInfo.title}.
+
+🔐 Your Login Credentials:
+Email: ${email}
+Password: ${appPassword}
+Mobile: ${mobile}
+
+${mode === "online" 
+  ? "Access: You can access the test series on your mobile device using the Elite Academy app. Download from Play Store or App Store and login with your credentials."
+  : "Access: Visit our institute to give tests. Please bring your enrollment details.\n\nInstitute Address: Elite Academy, [Your Address]\nTiming: Monday to Saturday, 9:00 AM - 6:00 PM"
+}
+
+📋 Enrollment Details:
+- Student Name: ${fullName}
+- Father's Name: ${fatherName}
+- Mode: ${modeInfo.title}
+- Amount Paid: ₹${amount}
+- Payment ID: ${paymentId}
+
+📚 What's Included:
+- Weekly mock tests with detailed solutions
+- 23,000+ previous year questions
+- Performance analytics and progress tracking
+- Section-wise and subject-wise analysis
+- Expert guidance and doubt resolution
+
+Need Help?
+Email: 2025eliteacademy@gmail.com
+WhatsApp: [Your WhatsApp Number]
+
+Best regards,
+Elite Academy Team
+
+All the best for your exam preparation! 🌟
+  `;
+
+  await sendEmail(email, subject, text, html);
+  console.log(`Weekly Test Series enrollment email sent to ${email}`);
+}
+
+
 // ✅ CORRECT EXPORT
 module.exports = {
   sendEmail,
@@ -673,5 +906,6 @@ module.exports = {
   sendBookEmail,        // ✅ NEW - for single books
   sendPackageEmail,      // ✅ NEW - for packages
   sendCoachingEmail,
-  sendCrashCourseEmail   // ✅ NEW - for crash course
+  sendCrashCourseEmail,   // ✅ NEW - for crash course
+  sendWeeklyTestSeriesEnrollmentEmail
 };

@@ -17,6 +17,8 @@ const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCourse = require("../models/CrashCourse");
+const WeeklyTestSeries = require("../models/WeeklyTestSeries");
+const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -129,6 +131,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
   const isCoachingPurchase = orderDetails?.notes?.purchaseType === "coaching" || 
                            (await CoachingEnrollment.findOne({ razorpayOrderId: orderId }));                
+
+  if (orderDetails?.notes.purchaseType === "weekly-testseries-online" || orderDetails?.notes.purchaseType === "weekly-testseries-offline") {
+    await handleWeeklyTestSeriesPayment(paymentEntity, paymentEntity.id);
+  }
 
   if (isCoachingPurchase) {
     console.log("📘 Processing Online Coaching enrollment payment");
@@ -1512,6 +1518,54 @@ if (isCurrentAffairPurchase) {
     res.status(500).send("Webhook error");
   }
 };
+
+
+
+// Handle Weekly Test Series Payment Success
+async function handleWeeklyTestSeriesPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const enrollment = await WeeklyTestSeries.findOne({ razorpayOrderId: orderId });
+
+    if (!enrollment) {
+      console.error(`No enrollment found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (enrollment.status === "confirmed") {
+      console.log(`Payment already processed for order ${orderId}`);
+      return;
+    }
+
+    // Update enrollment status
+    enrollment.status = "confirmed";
+    enrollment.razorpayPaymentId = paymentId;
+    await enrollment.save();
+
+    // Determine if online or offline based on notes
+    const isOnline = paymentEntity.notes?.purchaseType === "weekly-testseries-online";
+    const mode = isOnline ? "online" : "offline";
+
+    // Send enrollment confirmation email
+    await sendWeeklyTestSeriesEnrollmentEmail({
+      email: enrollment.email,
+      fullName: enrollment.fullName,
+      mobile: enrollment.mobile,
+      appPassword: enrollment.appPassword,
+      amount: enrollment.amount,
+      paymentId: paymentId,
+      mode: mode,
+      fatherName: enrollment.fatherName
+    });
+
+    console.log(`Weekly Test Series enrollment confirmed for ${enrollment.email} - ${mode} mode`);
+  } catch (error) {
+    console.error("Error handling weekly test series payment:", error);
+    throw error;
+  }
+}
+
+
 
 module.exports = {
   handleRazorpayWebhook,
