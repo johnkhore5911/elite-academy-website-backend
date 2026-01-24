@@ -54,6 +54,7 @@ app.use("/api/polity", require("./src/routes/polityRoutes"));
 app.use("/api/books", require("./src/routes/bookRoutes")); 
 app.use("/api/coaching", require("./src/routes/coachingRoutes")); 
 app.use("/api/videocoaching", require("./src/routes/videocoachingRoutes"));
+app.use("/api/videocrashcoaching", require("./src/routes/videocrashcoachingRoutes"));
 app.use("/api/crashcourse", require("./src/routes/crashcourseRoutes.js"));
 app.use("/api/admin", require("./src/routes/adminRoutes")); 
 
