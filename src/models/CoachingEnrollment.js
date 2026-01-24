@@ -15,6 +15,10 @@ const coachingEnrollmentSchema = new mongoose.Schema(
       default: "pending",
       index: true,
     },
+    addedByAdmin: {
+      type: String, // admin user ID or email
+      required: false
+    },
     amount: { type: Number, required: true },
     razorpayOrderId: { type: String, required: true, unique: true },
     razorpayPaymentId: { type: String },
