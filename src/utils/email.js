@@ -893,7 +893,13 @@ Elite Academy Team
 All the best for your exam preparation! 🌟
   `;
 
-  await sendEmail(email, subject, text, html);
+  // await sendEmail(email, subject, text, html);
+  await sendEmail({ 
+    to: email, 
+    subject: subject, 
+    text: text, 
+    html: html 
+  });
   console.log(`Weekly Test Series enrollment email sent to ${email}`);
 }
 
