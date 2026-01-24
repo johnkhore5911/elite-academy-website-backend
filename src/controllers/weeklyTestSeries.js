@@ -11,7 +11,7 @@ exports.getInfo_Online = async (req, res) => {
     package: {
       name: "⏰ Total 12 Mock test series every sunday starting from 1st Feb till 1st May",
       price: process.env.WeeklyTest_PRICE_Online || 899,
-      originalPrice: 1299,
+      originalPrice: 599,
       description: "Stay exam-ready with weekly full-length mock tests, detailed performance analytics."
     }
   });
@@ -22,7 +22,7 @@ exports.getInfo_Offline = async (req, res) => {
     package: {
       name: "⏰ Total 12 Mock test series every sunday starting from 1st Feb till 1st May",
       price: process.env.WeeklyTest_PRICE_Offline || 899,
-      originalPrice: 1299,
+      originalPrice: 799,
       description: "Stay exam-ready with weekly full-length mock tests, detailed performance analytics."
     }
   });
