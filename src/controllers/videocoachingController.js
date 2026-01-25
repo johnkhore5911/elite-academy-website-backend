@@ -52,12 +52,37 @@ const createCoachingVideo = async (req, res, next) => {
 };
 
 
+const updateCoachingVideo = async (req, res, next) => {
+  try {
+    const { role } = req.user;
+    const { id } = req.params;
+    const { title, description, videoId, isActive } = req.body;
+
+    if (role !== "admin") {
+      return res.status(403).json({ error: "Only admin can update videos" });
+    }
+
+    const updatedVideo = await Coaching.findByIdAndUpdate(
+      id,
+      { title, description, videoId, isActive },
+      { new: true } // returns the updated document
+    );
+
+    if (!updatedVideo) {
+      return res.status(404).json({ error: "Video not found" });
+    }
+
+    res.json(updatedVideo);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const deleteCoachingVideo = async (req, res, next) => {
   try {
     const { role } = req.user;
     const { id } = req.params;
 
-    // Verify admin role (consistent with your slotController logic)
     if (role !== "admin") {
       return res.status(403).json({ error: "Only admin can delete videos" });
     }
@@ -73,10 +98,10 @@ const deleteCoachingVideo = async (req, res, next) => {
     next(err);
   }
 };
-
 module.exports = {
   getLatestClass,
   createCoachingVideo,
   deleteCoachingVideo,
-  getAllClasses
+  getAllClasses,
+  updateCoachingVideo
 };
