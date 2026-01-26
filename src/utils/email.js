@@ -658,6 +658,129 @@ const getBookEmoji = (bookType) => {
 /**
  * Sends crash course confirmation with Premium UI
  */
+// const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
+//   const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
+
+//   // --- GENERATE BOOKS DOWNLOAD SECTION ---
+//   const booksHtml = Object.entries(pdfLinks).map(([key, link]) => {
+//     const bookName = typeof getBookDisplayName === 'function' ? getBookDisplayName(key) : key;
+//     const emoji = typeof getBookEmoji === 'function' ? getBookEmoji(key) : '📚';
+    
+//     return `
+//       <div style="margin-bottom: 10px; padding: 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+//         <span style="font-size: 14px; color: #374151;">${emoji} <strong>${bookName}</strong></span>
+//         <a href="${link}" style="background: #667eea; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: inline-block;">Download</a>
+//       </div>
+//     `;
+//   }).join('');
+
+//   const html = `
+//     <!DOCTYPE html>
+//     <html>
+//     <head>
+//       <meta charset="utf-8">
+//       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//     </head>
+//     <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6;">
+//       <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+        
+//         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center;">
+//           <h1 style="color: #ffffff; margin: 0; font-size: 28px;">✅ Registration Complete!</h1>
+//           <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">Welcome to the Elite Academy Crash Course</p>
+//         </div>
+
+//         <div style="padding: 30px;">
+//           <p style="font-size: 16px; color: #374151;">Dear <strong>${enrollment.fullName}</strong>,</p>
+//           <p style="font-size: 16px; color: #374151; line-height: 1.6;">
+//             Congratulations! Your payment has been confirmed. Your seat is officially reserved for the upcoming Crash Course batch.
+//           </p>
+
+//           <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin: 24px 0; text-align: center;">
+//              <h3 style="margin: 0; color: #92400e;">🚀 Batch Starts: 1st February, 2026</h3>
+//              <p style="margin: 5px 0; font-size: 14px; color: #78350f;">Your course access and mobile login will be activated on this date.</p>
+//           </div>
+
+//           <div style="background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); border-radius: 12px; padding: 24px; margin: 24px 0; border: 2px solid #667eea;">
+//             <h2 style="color: #667eea; margin-top: 0; font-size: 18px;">🔐 Mobile App Login Details</h2>
+//             <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
+//                <p style="margin: 8px 0; font-size: 14px; color: #6b7280;"><strong>Email/User ID:</strong> <span style="color: #111827;">${enrollment.email}</span></p>
+//                <p style="margin: 8px 0; font-size: 14px; color: #6b7280;"><strong>Password:</strong> <span style="color: #111827; font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">${enrollment.appPassword}</span></p>
+//             </div>
+//             <p style="font-size: 12px; color: #ef4444; margin-top: 10px;">⚠️ Login access will be enabled on the batch start date.</p>
+//           </div>
+
+//           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 24px 0;">
+//             <h3 style="margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📚 Your 8 Bonus Books (Instant Access)</h3>
+//             <p style="font-size: 14px; color: #475569; margin-bottom: 15px;">Start your preparation immediately with our complete library:</p>
+//             ${booksHtml}
+//           </div>
+
+//           <h3 style="color: #111827; font-size: 18px;">📱 Download the App</h3>
+//           <p style="color: #374151; font-size: 14px;">Access your classes and mock tests on your mobile device:</p>
+//           <div style="margin: 20px 0;">
+//             <a href="https://play.google.com/store/apps/details?id=com.johnnykhore.eliteacademy&hl=en" style="display: inline-block; background: #34d399; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; margin-right: 10px; font-size: 13px; font-weight: bold;">📱 Play Store</a>
+//             <a href="https://apps.apple.com/in/app/elite-academy-mock-tests/id6746954938" style="display: inline-block; background: #60a5fa; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold;">📱 App Store</a>
+//           </div>
+
+//           <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
+//             <h3 style="color: #111827; margin-top: 0; font-size: 18px;">📋 Student Profile</h3>
+//             <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+//               <tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 10px 0; color: #6b7280;">Father's Name</td><td style="padding: 10px 0; color: #111827; text-align: right; font-weight: 500;">${enrollment.fatherName}</td></tr>
+//               <tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 10px 0; color: #6b7280;">Mobile</td><td style="padding: 10px 0; color: #111827; text-align: right; font-weight: 500;">${enrollment.mobile}</td></tr>
+//               <tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 10px 0; color: #6b7280;">Amount Paid</td><td style="padding: 10px 0; color: #059669; text-align: right; font-weight: 600;">₹${enrollment.amount}</td></tr>
+//               <tr><td style="padding: 10px 0; color: #6b7280;">Payment ID</td><td style="padding: 10px 0; color: #111827; text-align: right; font-size: 11px; font-family: monospace;">${paymentId}</td></tr>
+//             </table>
+//           </div>
+
+//           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 20px;">
+//             <h3 style="color: #111827; font-size: 16px;">🏢 Visit Our Institute</h3>
+//             <p style="font-size: 13px; color: #475569; line-height: 1.5;">
+//               <strong>Elite Academy</strong><br>
+//               SCO-212 Sector 24D Chandigarh<br>
+//               <strong>Contact:</strong> 7696954686
+//             </p>
+//           </div>
+
+//           <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
+//             <p style="color: #1e40af; margin: 0; font-size: 14px;">
+//               <strong>Need Help?</strong> Email us at 2025eliteacademy@gmail.com or WhatsApp us at 7696954686.
+//             </p>
+//           </div>
+
+//           <p style="font-size: 15px; color: #374151; margin-top: 30px;">
+//             Best regards,<br>
+//             <strong>Elite Academy Team</strong>
+//           </p>
+//         </div>
+
+//         <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+//           <p style="color: #6b7280; font-size: 11px; margin: 5px 0;">© 2026 Elite Academy. All rights reserved.</p>
+//           <p style="color: #6b7280; font-size: 11px; margin: 5px 0;">Your Success, Our Mission 🎓</p>
+//         </div>
+
+//       </div>
+//     </body>
+//     </html>
+//   `;
+
+//   // Send to Student
+//   await sendEmail({
+//     to: enrollment.email,
+//     subject: "🚀 Welcome to Crash Course - Registration Successful + 8 Books",
+//     html: html
+//   });
+
+//   // Send to Admin
+//   await sendEmail({
+//     to: adminEmail,
+//     subject: `🎯 NEW CRASH COURSE ENROLLMENT: ${enrollment.fullName}`,
+//     html: `<h3>Admin Report:</h3>` + html
+//   });
+// };
+
+/**
+ * Sends crash course confirmation with Premium UI
+ */
 const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
   const adminEmail = process.env.ADMIN_EMAIL || "2025eliteacademy@gmail.com";
 
@@ -668,8 +791,8 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
     
     return `
       <div style="margin-bottom: 10px; padding: 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-size: 14px; color: #374151;">${emoji} <strong>${bookName}</strong></span>
-        <a href="${link}" style="background: #667eea; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: inline-block;">Download</a>
+        <span style="font-size: 14px; color: #374151; padding-right: 15px;">${emoji} &nbsp; <strong>${bookName}</strong></span>
+        <a href="${link}" style="background: #667eea; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: inline-block; min-width: 80px; text-align: center;">Download</a>
       </div>
     `;
   }).join('');
@@ -695,18 +818,24 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
             Congratulations! Your payment has been confirmed. Your seat is officially reserved for the upcoming Crash Course batch.
           </p>
 
-          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin: 24px 0; text-align: center;">
-             <h3 style="margin: 0; color: #92400e;">🚀 Batch Starts: 1st February, 2026</h3>
-             <p style="margin: 5px 0; font-size: 14px; color: #78350f;">Your course access and mobile login will be activated on this date.</p>
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin: 24px 0;">
+             <h3 style="margin: 0; color: #92400e; text-align: center;">🚀 Batch Starts: 1st February, 2026</h3>
+             <p style="margin: 10px 0 5px 0; font-size: 14px; color: #78350f; line-height: 1.5;">
+               <strong>Access Note:</strong> Only this email ID (<strong>${enrollment.email}</strong>) will be able to access the lectures and tracker app. 
+               You can login with the credentials below. If you already have an account created with this email, it will work perfectly.
+             </p>
           </div>
 
           <div style="background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%); border-radius: 12px; padding: 24px; margin: 24px 0; border: 2px solid #667eea;">
-            <h2 style="color: #667eea; margin-top: 0; font-size: 18px;">🔐 Mobile App Login Details</h2>
+            <h2 style="color: #667eea; margin-top: 0; font-size: 18px;">🔐 Login Details (App & Web)</h2>
             <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
                <p style="margin: 8px 0; font-size: 14px; color: #6b7280;"><strong>Email/User ID:</strong> <span style="color: #111827;">${enrollment.email}</span></p>
                <p style="margin: 8px 0; font-size: 14px; color: #6b7280;"><strong>Password:</strong> <span style="color: #111827; font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">${enrollment.appPassword}</span></p>
             </div>
-            <p style="font-size: 12px; color: #ef4444; margin-top: 10px;">⚠️ Login access will be enabled on the batch start date.</p>
+            <p style="font-size: 13px; color: #4b5563; margin-top: 15px; line-height: 1.4;">
+              🌐 <strong>Web Access:</strong> You can also visit <a href="https://eliteacademy.pro" style="color: #667eea; font-weight: bold;">eliteacademy.pro</a> and login with these credentials (or your previous login) to view your lectures.
+            </p>
+            <p style="font-size: 12px; color: #ef4444; margin-top: 10px;">⚠️ Video lectures and app access will be enabled on February 1st.</p>
           </div>
 
           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 24px 0;">
@@ -723,7 +852,7 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
           </div>
 
           <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
-            <h3 style="color: #111827; margin-top: 0; font-size: 18px;">📋 Student Profile</h3>
+            <h3 style="color: #111827; margin-top: 0; font-size: 18px;">📋 Enrollment Profile</h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
               <tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 10px 0; color: #6b7280;">Father's Name</td><td style="padding: 10px 0; color: #111827; text-align: right; font-weight: 500;">${enrollment.fatherName}</td></tr>
               <tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 10px 0; color: #6b7280;">Mobile</td><td style="padding: 10px 0; color: #111827; text-align: right; font-weight: 500;">${enrollment.mobile}</td></tr>
@@ -736,7 +865,7 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
             <h3 style="color: #111827; font-size: 16px;">🏢 Visit Our Institute</h3>
             <p style="font-size: 13px; color: #475569; line-height: 1.5;">
               <strong>Elite Academy</strong><br>
-              SCO-212 Sector 24D Chandigarh<br>
+              <a href="https://maps.google.com/?q=Elite+Academy+SCO-212+Sector+24D+Chandigarh" style="color: #667eea; text-decoration: underline;">SCO-212 Sector 24D Chandigarh</a><br>
               <strong>Contact:</strong> 7696954686
             </p>
           </div>
@@ -766,7 +895,7 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
   // Send to Student
   await sendEmail({
     to: enrollment.email,
-    subject: "🚀 Welcome to Crash Course - Registration Successful + 8 Books",
+    subject: "🚀 Welcome to Crash Course - Registration Successful",
     html: html
   });
 
