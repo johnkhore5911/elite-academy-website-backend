@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
-const { getLatestClass, createCoachingVideo,getAllClasses } = require("../controllers/videocrashcoachingController");
+const { getLatestClass, createCoachingVideo,getAllClasses,deleteCoachingVideo,updateCoachingVideo } = require("../controllers/videocrashcoachingController");
 
 // Public route to get the video for the student dashboard
 router.get("/latest", getLatestClass);
@@ -13,4 +13,6 @@ router.post("/", auth, createCoachingVideo);
 
 router.get("/all", getAllClasses);
 
+router.put("/update/:id", auth, updateCoachingVideo);
+router.delete("/delete/:id", auth, deleteCoachingVideo);
 module.exports = router;

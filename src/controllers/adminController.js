@@ -30,7 +30,7 @@ exports.getAllConfirmedDetails = async (req, res) => {
 
 
 
-exports.getAllConfirmedDetails = async (req, res) => {
+exports.getAllConfirmedDetailsCrashCourse = async (req, res) => {
   try {
     // 1. Filter by "confirmed" status
     // 2. .select("-appPassword") removes the password from the results
