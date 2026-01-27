@@ -1,18 +1,24 @@
-// src/routes/coachingRoutes.js
+// src/routes/videocrashcoachingRoutes.js
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/auth");
-const { getLatestClass, createCoachingVideo,getAllClasses,deleteCoachingVideo,updateCoachingVideo } = require("../controllers/videocrashcoachingController");
+const auth = require("../middleware/auth"); // Assuming this checks for Admin
+const { 
+    getLatestLiveClass,
+    createCoachingVideo, 
+    getAllClasses, 
+    updateLecture, 
+    deleteLecture 
+} = require("../controllers/videocrashcoachingController");
 
-// Public route to get the video for the student dashboard
-router.get("/latest", getLatestClass);
+// Student & Admin: Get lectures (can use ?subject=Maths in URL)
+router.get("/", getAllClasses);
 
-// Protected admin route to upload/set the video ID
+// Student & Admin: Get latest live class with Google Meet link
+router.get("/latest-live", getLatestLiveClass);
+
+// Admin Only: CRUD
 router.post("/", auth, createCoachingVideo);
-// router.delete("/:id", auth, deleteCoachingVideo); // New delete route
+router.put("/:id", auth, updateLecture);
+router.delete("/:id", auth, deleteLecture);
 
-router.get("/all", getAllClasses);
-
-router.put("/update/:id", auth, updateCoachingVideo);
-router.delete("/delete/:id", auth, deleteCoachingVideo);
 module.exports = router;

@@ -1,31 +1,22 @@
-// src/models/Coaching.js
+// src/models/CrashCoachingVideo.js
 const mongoose = require("mongoose");
 
-const crashcoachingSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      trim: true,
-      default: "Live Class", // Optional title
-    },
-    description: {
-      type: String,
-      trim: true, // Optional description
-    },
-    videoId: {
-      type: String,
-      required: true, // The YouTube ID is mandatory
-      trim: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: true, // Useful to toggle visibility without deleting
-    },
+const crashcoachingSchema = new mongoose.Schema({
+  subject: {
+    type: String,
+    required: true,
+    enum: ["Maths", "Reasoning", "English", "Punjabi GK", "Punjabi Grammar", "General Knowledge", "Computer", "Current Affairs", "General Studies"]
   },
-  { 
-    // This automatically creates 'createdAt' and 'updatedAt' fields
-    timestamps: true 
-  }
-);
+  subSubject: {
+    type: String,
+    enum: ["Polity", "Economics", "Geography", "Environment", "Science", "Modern-History", "Ancient-History", "Medieval-History", null],
+    default: null
+  },
+  title: { type: String, required: true },
+  description: { type: String },
+  videoId: { type: String },      // YouTube Recording
+  meetingLink: { type: String },  // Google Meet Live
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
 
 module.exports = mongoose.model("CrashCoaching", crashcoachingSchema);
