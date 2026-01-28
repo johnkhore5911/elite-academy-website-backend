@@ -1,5 +1,6 @@
 const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCoachingEnrollment = require("../models/CrashCourse");
+const weeklytestSeries = require("../models/WeeklyTestSeries");
 const User = require("../models/User");
 const Razorpay = require("razorpay");
 const bcrypt = require("bcrypt");
@@ -403,6 +404,50 @@ exports.admincrashAddEnrollment = async (req, res) => {
     res.status(500).json({ 
       success: false,
       message: "Error adding enrollment", 
+      error: error.message 
+    });
+  }
+};
+
+
+
+
+exports.checkWeeklyAccess = async (req, res) => {
+  try {
+    console.log("API hit of the checkAccess")
+    const { email } = req.query;
+
+    // Validate email parameter
+    if (!email) {
+      return res.status(400).json({ 
+        hasAccess: false, 
+        message: "Email parameter is required" 
+      });
+    }
+
+    // Find enrollment with confirmed status for the given email
+    const confirmedEnrollment = await weeklytestSeries.findOne({
+      email: email,
+      status: "confirmed"
+    });
+
+    // Return access status
+    if (confirmedEnrollment) {
+      return res.status(200).json({ 
+        hasAccess: true,
+        message: "Access granted"
+      });
+    } else {
+      return res.status(200).json({ 
+        hasAccess: false,
+        message: "No confirmed enrollment found"
+      });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ 
+      hasAccess: false,
+      message: "Error checking access", 
       error: error.message 
     });
   }
