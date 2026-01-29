@@ -19,6 +19,8 @@ const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCourse = require("../models/CrashCourse");
 const WeeklyTestSeries = require("../models/WeeklyTestSeries");
 const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
+const MonthlyCurrentAffairPurchase = require("../models/MonthlyCurrentAffairPurchase");
+const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -131,6 +133,9 @@ const handleRazorpayWebhook = async (req, res) => {
 
   const isCoachingPurchase = orderDetails?.notes?.purchaseType === "coaching" || 
                            (await CoachingEnrollment.findOne({ razorpayOrderId: orderId }));                
+
+  const isMonthlyCurrentAffairPurchase = orderDetails?.notes?.purchaseType === "monthly_magazine" ||
+                                         (await MonthlyCurrentAffairPurchase.findOne({ orderId: orderId }));
 
   if (orderDetails?.notes.purchaseType === "weekly-testseries-online" || orderDetails?.notes.purchaseType === "weekly-testseries-offline") {
     await handleWeeklyTestSeriesPayment(paymentEntity, paymentEntity.id);
@@ -757,6 +762,238 @@ if (isBookPurchase) {
     }
   
     return res.json({ status: "ok" });
+    }
+
+    // Handle Monthly Current Affairs Purchase
+    if (isMonthlyCurrentAffairPurchase) {
+      console.log("📰 Processing Monthly Current Affairs purchase payment");
+
+      // Find purchase
+      let purchase = await MonthlyCurrentAffairPurchase.findOne({ orderId: orderId });
+
+      if (purchase) {
+        // Prevent duplicate processing
+        if (purchase.status === "completed") {
+          console.log("ℹ️ Monthly Current Affairs purchase already confirmed:", purchase._id);
+          return res.json({ status: "ok" });
+        }
+
+        // Update existing purchase
+        purchase.status = "completed";
+        purchase.paymentId = paymentId;
+        await purchase.save();
+      } else {
+        // Create new purchase from order notes
+        if (!orderDetails || !orderDetails.notes) {
+          console.error("❌ Cannot create monthly current affairs purchase: order details missing");
+          return res.status(400).json({ error: "Order details missing" });
+        }
+
+        const userId = orderDetails.notes.userId;
+        const userName = orderDetails.notes.userName;
+        const userEmail = orderDetails.notes.userEmail;
+        const purchaseSubType = orderDetails.notes.purchaseSubType;
+        const month = orderDetails.notes.month;
+        const monthsIncluded = orderDetails.notes.monthsIncluded || [];
+
+        if (!userId || !userEmail) {
+          console.error("❌ Cannot create monthly current affairs purchase: missing user info");
+          return res.status(400).json({ error: "User information missing" });
+        }
+
+        purchase = new MonthlyCurrentAffairPurchase({
+          userId,
+          userName,
+          userEmail,
+          purchaseType: purchaseSubType,
+          month: purchaseSubType === 'single' ? month : null,
+          monthsIncluded: purchaseSubType === 'complete-pack' ? monthsIncluded : [month],
+          orderId: orderId,
+          paymentId: paymentId,
+          amount: paymentEntity.amount / 100,
+          status: "completed"
+        });
+
+        await purchase.save();
+        console.log("✅ Created monthly current affairs purchase after payment:", purchase._id);
+      }
+
+      console.log("📧 Sending Monthly Current Affairs emails...");
+
+      try {
+        const admin = await User.findOne({ role: "admin" });
+        const emailPromises = [];
+
+        // Get magazine details for email
+        let magazineDetails = [];
+        if (purchase.purchaseType === 'single' && purchase.month) {
+          const magazine = await MonthlyCurrentAffair.findOne({ 
+            month: purchase.month, 
+            isActive: true 
+          });
+          if (magazine) {
+            magazineDetails.push({
+              month: magazine.month,
+              title: magazine.title,
+              driveLink: magazine.driveLink
+            });
+          }
+        } else if (purchase.purchaseType === 'complete-pack' && purchase.monthsIncluded) {
+          const magazines = await MonthlyCurrentAffair.find({ 
+            month: { $in: purchase.monthsIncluded },
+            isActive: true 
+          });
+          magazineDetails = magazines.map(mag => ({
+            month: mag.month,
+            title: mag.title,
+            driveLink: mag.driveLink
+          }));
+        }
+
+        // Email to User
+        if (purchase.userEmail) {
+          const magazinesHtml = magazineDetails.map(mag => `
+            <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6;">
+              <h3 style="margin: 0 0 10px 0; color: #1e40af; font-size: 18px;">📰 ${mag.title}</h3>
+              <p style="margin: 0; color: #64748b; font-size: 14px;">Month: ${mag.month.toUpperCase()}</p>
+              <div style="margin-top: 15px;">
+                <a href="${mag.driveLink}" 
+                   style="display: inline-block; background: #3b82f6; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600;">
+                  Download Magazine →
+                </a>
+              </div>
+            </div>
+          `).join('');
+
+          emailPromises.push(
+            sendEmail({
+              to: purchase.userEmail,
+              subject: `📰 Elite Academy - Monthly Current Affairs Magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
+                  
+                  <!-- Header -->
+                  <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 28px;">📰 Monthly Current Affairs</h1>
+                    <p style="color: #dbeafe; margin-top: 10px; font-size: 16px;">
+                      ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}
+                    </p>
+                  </div>
+
+                  <!-- Main Content -->
+                  <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    
+                    <p style="color: #1f2937; font-size: 16px; line-height: 1.6;">
+                      Dear <strong>${purchase.userName}</strong>,
+                    </p>
+                    
+                    <p style="color: #059669; font-size: 18px; font-weight: bold; margin: 20px 0;">
+                      ✅ Payment Confirmed! Download your magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''} now.
+                    </p>
+
+                    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+                      <h3 style="margin-top: 0; color: #065f46; font-size: 18px;">📋 Purchase Details</h3>
+                      <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 8px 0; color: #4b5563;"><strong>Type</strong></td>
+                          <td style="padding: 8px 0; color: #1f2937; text-align: right;">
+                            ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #4b5563;"><strong>Amount Paid</strong></td>
+                          <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: bold;">₹${purchase.amount}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #4b5563;"><strong>Payment ID</strong></td>
+                          <td style="padding: 8px 0; color: #1f2937; text-align: right; font-size: 12px;">${paymentId}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #4b5563;"><strong>Purchase Date</strong></td>
+                          <td style="padding: 8px 0; color: #1f2937; text-align: right;">
+                            ${new Date().toLocaleDateString('en-IN', { 
+                              timeZone: 'Asia/Kolkata', 
+                              day: 'numeric', 
+                              month: 'long', 
+                              year: 'numeric' 
+                            })}
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <h3 style="color: #1e40af; margin: 30px 0 15px 0;">📚 Your Magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''}</h3>
+                    ${magazinesHtml}
+
+                    <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                      <p style="margin: 0; color: #92400e; font-size: 14px;">
+                        <strong>📌 Important:</strong> These are Google Drive links. You can download the PDF files directly. 
+                        Make sure to save them for future reference as access is lifetime.
+                      </p>
+                    </div>
+
+                    <p style="color: #6b7280; margin-top: 30px; text-align: center;">
+                      Thank you for choosing Elite Academy!<br>
+                      <strong>Happy Reading! 📖</strong>
+                    </p>
+                  </div>
+                </div>
+              `
+            })
+          );
+        }
+
+        // Email to Admin
+        if (admin && admin.email) {
+          const magazinesList = magazineDetails.map(mag => 
+            `<li><strong>${mag.title}</strong> (${mag.month.toUpperCase()})</li>`
+          ).join('');
+
+          emailPromises.push(
+            sendEmail({
+              to: admin.email,
+              subject: `📰 New Monthly Current Affairs Purchase - ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2 style="color: #3b82f6;">📰 New Monthly Current Affairs Purchase</h2>
+                  
+                  <p>You have a new purchase of <strong>${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}</strong>.</p>
+                  
+                  <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Customer Name:</strong> ${purchase.userName}</p>
+                    <p><strong>Customer Email:</strong> ${purchase.userEmail}</p>
+                    <p><strong>Purchase Type:</strong> ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}</p>
+                    <p><strong>Magazines (${magazineDetails.length}):</strong></p>
+                    <ul>${magazinesList}</ul>
+                    <p><strong>Amount:</strong> ₹${purchase.amount}</p>
+                    <p><strong>Payment ID:</strong> ${paymentId}</p>
+                    <p><strong>Purchase Date:</strong> ${new Date().toLocaleDateString('en-IN', {
+                      timeZone: 'Asia/Kolkata',
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}</p>
+                  </div>
+                  
+                  <p style="color: #6b7280; margin-top: 30px;">
+                    Best regards,<br>
+                    <strong>Elite Meet System</strong>
+                  </p>
+                </div>
+              `
+            })
+          );
+        }
+
+        await Promise.all(emailPromises);
+        console.log("✅ Monthly Current Affairs emails sent successfully");
+
+      } catch (emailError) {
+        console.error("❌ Error sending Monthly Current Affairs emails:", emailError);
+      }
+
+      return res.json({ status: "ok" });
     }
 
 
