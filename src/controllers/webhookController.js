@@ -853,12 +853,11 @@ if (isBookPurchase) {
         // Email to User
         if (purchase.userEmail) {
           const magazinesHtml = magazineDetails.map(mag => `
-            <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 20px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3b82f6;">
-              <h3 style="margin: 0 0 10px 0; color: #1e40af; font-size: 18px;">📰 ${mag.title}</h3>
-              <p style="margin: 0; color: #64748b; font-size: 14px;">Month: ${mag.month.toUpperCase()}</p>
-              <div style="margin-top: 15px;">
-                <a href="${mag.driveLink}" 
-                   style="display: inline-block; background: #3b82f6; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 600;">
+            <div class="magazine-card">
+              <h3 class="magazine-title">📰 ${mag.title}</h3>
+              <p class="magazine-month">Month: ${mag.month.toUpperCase()}</p>
+              <div>
+                <a href="${mag.driveLink}" class="download-btn">
                   Download Magazine →
                 </a>
               </div>
@@ -870,74 +869,265 @@ if (isBookPurchase) {
               to: purchase.userEmail,
               subject: `📰 Elite Academy - Monthly Current Affairs Magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''}`,
               html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
-                  
-                  <!-- Header -->
-                  <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-                    <h1 style="color: white; margin: 0; font-size: 28px;">📰 Monthly Current Affairs</h1>
-                    <p style="color: #dbeafe; margin-top: 10px; font-size: 16px;">
-                      ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}
-                    </p>
-                  </div>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <meta name="color-scheme" content="light dark">
+                  <style>
+                    body { 
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+                      margin: 0; 
+                      padding: 16px; 
+                      background-color: #f8fafc; 
+                      color: #1e293b;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      body { background-color: #0f172a; color: #f1f5f9; }
+                    }
+                    .container { 
+                      max-width: 600px; 
+                      margin: 0 auto; 
+                      background: #ffffff; 
+                      border-radius: 16px; 
+                      overflow: hidden; 
+                      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .container { background: #1e293b; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+                    }
+                    .header { 
+                      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+                      padding: 32px 24px; 
+                      text-align: center; 
+                    }
+                    .header h1 { 
+                      color: #ffffff; 
+                      margin: 0; 
+                      font-size: 24px; 
+                      font-weight: 700; 
+                    }
+                    .header p { 
+                      color: #dbeafe; 
+                      margin: 8px 0 0 0; 
+                      font-size: 16px; 
+                      font-weight: 500;
+                    }
+                    .content { 
+                      padding: 24px; 
+                    }
+                    .success-badge { 
+                      display: inline-flex; 
+                      align-items: center; 
+                      background: #dcfce7; 
+                      color: #166534; 
+                      padding: 8px 16px; 
+                      border-radius: 20px; 
+                      font-weight: 600; 
+                      font-size: 14px; 
+                      margin-bottom: 20px;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .success-badge { background: #14532d; color: #86efac; }
+                    }
+                    .greeting { 
+                      font-size: 16px; 
+                      color: #374151; 
+                      margin: 0 0 16px 0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .greeting { color: #d1d5db; }
+                    }
+                    .confirmation { 
+                      font-size: 18px; 
+                      font-weight: 600; 
+                      color: #059669; 
+                      margin: 20px 0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .confirmation { color: #34d399; }
+                    }
+                    .details-box { 
+                      background: #f1f5f9; 
+                      border: 1px solid #e2e8f0; 
+                      border-radius: 12px; 
+                      padding: 20px; 
+                      margin: 20px 0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .details-box { background: #334155; border-color: #475569; }
+                    }
+                    .details-box h3 { 
+                      margin: 0 0 16px 0; 
+                      color: #1e40af; 
+                      font-size: 16px; 
+                      font-weight: 600;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .details-box h3 { color: #60a5fa; }
+                    }
+                    .details-table { 
+                      width: 100%; 
+                      border-collapse: collapse; 
+                    }
+                    .details-table td { 
+                      padding: 8px 0; 
+                      border-bottom: 1px solid #e2e8f0; 
+                      font-size: 14px;
+                    }
+                    .details-table td:first-child { 
+                      color: #64748b; 
+                      font-weight: 500;
+                    }
+                    .details-table td:last-child { 
+                      text-align: right; 
+                      color: #1f2937; 
+                      font-weight: 600;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .details-table td { border-bottom-color: #475569; }
+                      .details-table td:first-child { color: #94a3b8; }
+                      .details-table td:last-child { color: #f1f5f9; }
+                    }
+                    .magazine-card { 
+                      background: #f8fafc; 
+                      border: 1px solid #e2e8f0; 
+                      border-radius: 12px; 
+                      padding: 20px; 
+                      margin: 16px 0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .magazine-card { background: #0f172a; border-color: #334155; }
+                    }
+                    .magazine-title { 
+                      margin: 0 0 8px 0; 
+                      color: #1e40af; 
+                      font-size: 18px; 
+                      font-weight: 600;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .magazine-title { color: #60a5fa; }
+                    }
+                    .magazine-month { 
+                      margin: 0 0 16px 0; 
+                      color: #64748b; 
+                      font-size: 14px; 
+                      font-weight: 500;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .magazine-month { color: #94a3b8; }
+                    }
+                    .download-btn { 
+                      display: inline-block; 
+                      background: #3b82f6; 
+                      color: #ffffff; 
+                      text-decoration: none; 
+                      padding: 12px 24px; 
+                      border-radius: 8px; 
+                      font-weight: 600; 
+                      font-size: 14px; 
+                      transition: all 0.2s ease;
+                    }
+                    .download-btn:hover { 
+                      background: #2563eb; 
+                      transform: translateY(-1px);
+                    }
+                    .note-box { 
+                      background: #fef3c7; 
+                      border: 1px solid #fbbf24; 
+                      border-radius: 8px; 
+                      padding: 16px; 
+                      margin: 20px 0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .note-box { background: #451a03; border-color: #d97706; }
+                    }
+                    .note-box p { 
+                      margin: 0; 
+                      color: #92400e; 
+                      font-size: 14px;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .note-box p { color: #fbbf24; }
+                    }
+                    .footer { 
+                      text-align: center; 
+                      margin-top: 24px; 
+                      padding-top: 20px; 
+                      border-top: 1px solid #e2e8f0;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .footer { border-top-color: #334155; }
+                    }
+                    .footer p { 
+                      margin: 0; 
+                      color: #64748b; 
+                      font-size: 14px;
+                    }
+                    @media (prefers-color-scheme: dark) {
+                      .footer p { color: #94a3b8; }
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <div class="header">
+                      <h1>📰 Monthly Current Affairs</h1>
+                      <p>${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}</p>
+                    </div>
 
-                  <!-- Main Content -->
-                  <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    
-                    <p style="color: #1f2937; font-size: 16px; line-height: 1.6;">
-                      Dear <strong>${purchase.userName}</strong>,
-                    </p>
-                    
-                    <p style="color: #059669; font-size: 18px; font-weight: bold; margin: 20px 0;">
-                      ✅ Payment Confirmed! Download your magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''} now.
-                    </p>
+                    <div class="content">
+                      <p class="greeting">Dear <strong>${purchase.userName}</strong>,</p>
+                      
+                      <div class="success-badge">✅ Payment Confirmed</div>
+                      
+                      <p class="confirmation">Your magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''} are ready for download!</p>
 
-                    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
-                      <h3 style="margin-top: 0; color: #065f46; font-size: 18px;">📋 Purchase Details</h3>
-                      <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                          <td style="padding: 8px 0; color: #4b5563;"><strong>Type</strong></td>
-                          <td style="padding: 8px 0; color: #1f2937; text-align: right;">
-                            ${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 8px 0; color: #4b5563;"><strong>Amount Paid</strong></td>
-                          <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: bold;">₹${purchase.amount}</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 8px 0; color: #4b5563;"><strong>Payment ID</strong></td>
-                          <td style="padding: 8px 0; color: #1f2937; text-align: right; font-size: 12px;">${paymentId}</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 8px 0; color: #4b5563;"><strong>Purchase Date</strong></td>
-                          <td style="padding: 8px 0; color: #1f2937; text-align: right;">
-                            ${new Date().toLocaleDateString('en-IN', { 
+                      <div class="details-box">
+                        <h3>📋 Purchase Details</h3>
+                        <table class="details-table">
+                          <tr>
+                            <td>Type</td>
+                            <td>${purchase.purchaseType === 'complete-pack' ? 'Complete Pack' : 'Single Magazine'}</td>
+                          </tr>
+                          <tr>
+                            <td>Amount Paid</td>
+                            <td>₹${purchase.amount}</td>
+                          </tr>
+                          <tr>
+                            <td>Payment ID</td>
+                            <td>${paymentId}</td>
+                          </tr>
+                          <tr>
+                            <td>Purchase Date</td>
+                            <td>${new Date().toLocaleDateString('en-IN', { 
                               timeZone: 'Asia/Kolkata', 
                               day: 'numeric', 
                               month: 'long', 
                               year: 'numeric' 
-                            })}
-                          </td>
-                        </tr>
-                      </table>
+                            })}</td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <h3 style="color: #1e40af; margin: 30px 0 16px 0; font-size: 18px; font-weight: 600;">
+                        📚 Your Magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''}
+                      </h3>
+                      ${magazinesHtml}
+
+                      <div class="note-box">
+                        <p><strong>📌 Important:</strong> These are Google Drive links. Download the PDF files and save them for future reference. Lifetime access guaranteed.</p>
+                      </div>
+
+                      <div class="footer">
+                        <p>Thank you for choosing Elite Academy!</p>
+                        <p><strong>Happy Reading! 📖</strong></p>
+                      </div>
                     </div>
-
-                    <h3 style="color: #1e40af; margin: 30px 0 15px 0;">📚 Your Magazine${purchase.purchaseType === 'complete-pack' ? 's' : ''}</h3>
-                    ${magazinesHtml}
-
-                    <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                      <p style="margin: 0; color: #92400e; font-size: 14px;">
-                        <strong>📌 Important:</strong> These are Google Drive links. You can download the PDF files directly. 
-                        Make sure to save them for future reference as access is lifetime.
-                      </p>
-                    </div>
-
-                    <p style="color: #6b7280; margin-top: 30px; text-align: center;">
-                      Thank you for choosing Elite Academy!<br>
-                      <strong>Happy Reading! 📖</strong>
-                    </p>
                   </div>
-                </div>
+                </body>
+                </html>
               `
             })
           );
