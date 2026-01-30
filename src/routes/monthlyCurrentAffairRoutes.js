@@ -17,8 +17,8 @@ router.get('/', getAllMagazines);
 router.get('/:month', getMagazineInfo);
 
 // User routes - authentication required
-router.post('/purchase/:month', auth, createMagazinePurchase);
 router.post('/purchase/complete-pack', auth, createCompletePackPurchase);
+router.post('/purchase/:month', auth, createMagazinePurchase);
 router.get('/my/purchases', auth, getMyPurchases);
 router.get('/access/:month', auth, checkMagazineAccess);
 router.get('/download/:month', auth, getMagazineDriveLink);
