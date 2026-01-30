@@ -61,20 +61,29 @@ const createPurchase = async (req, res, next) => {
     const { user } = req; // From auth middleware
 
     // Get or create user in MongoDB (auto-sync if doesn't exist)
-    const userDoc = await User.findOneAndUpdate(
-      { firebaseUid: user.id },
-      {
-        firebaseUid: user.id,
-        email: user.email,
-        name: user.name || user.email?.split('@')[0] || 'User',
-        role: 'user',
-      },
-      {
-        upsert: true,
-        new: true,
-        setDefaultsOnInsert: true,
+    let userDoc = await User.findOne({ firebaseUid: user.id });
+    
+    if (!userDoc) {
+      // Check if user exists by email (might be from manual signup or different firebaseUid)
+      const existingUser = await User.findOne({ email: user.email });
+      if (existingUser) {
+        // Update existing user with firebaseUid
+        userDoc = await User.findOneAndUpdate(
+          { email: user.email },
+          { firebaseUid: user.id },
+          { new: true }
+        );
+      } else {
+        // Create new user
+        userDoc = await User.create({
+          firebaseUid: user.id,
+          email: user.email,
+          name: user.name || user.email?.split('@')[0] || 'User',
+          role: 'user',
+          signupType: 'google',
+        });
       }
-    );
+    }
 
     // Validate Razorpay credentials
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
