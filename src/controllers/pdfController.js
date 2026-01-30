@@ -62,10 +62,14 @@ const createPurchase = async (req, res, next) => {
     const { user } = req; // From auth middleware
 
     // Get or create user in MongoDB (auto-sync if doesn't exist)
+    const userQuery = user.isManualAuth 
+      ? { _id: user.id }  // Manual auth uses MongoDB _id
+      : { firebaseUid: user.id }; // Firebase auth uses firebaseUid
+    
     const userDoc = await User.findOneAndUpdate(
-      { firebaseUid: user.id },
+      userQuery,
       {
-        firebaseUid: user.id,
+        ...(user.isManualAuth ? {} : { firebaseUid: user.id }),
         email: user.email,
         name: user.name || user.email?.split('@')[0] || 'User',
         role: 'user',
