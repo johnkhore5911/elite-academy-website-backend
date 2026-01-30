@@ -633,8 +633,15 @@ const sendCoachingEmail = async (enrollment, pdfLinks, paymentId) => {
           </div>
 
           <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
-            <p style="color: #1e40af; margin: 0; font-size: 14px;">
-              <strong>Support:</strong> Email us at 2025eliteacademy@gmail.com or WhatsApp us at 7696954686.
+            <p style="color: #1e40af; margin: 0; font-size: 14px; text-align: center;">
+              <strong>📢 Action Required: Join Your Batch Group</strong><br>
+              Since you are an enrolled student, this WhatsApp Community is your direct lifeline to the academy for all daily operations and lecture timings.
+              <br><br>
+              <strong>Secure Your Access Now:</strong> Click the link below to join your fellow batchmates and stay updated:
+              <br><br>
+              <a href="https://chat.whatsapp.com/JCC20uRItckAjwSy76IGiq" style="display: inline-block; background: #25d366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 8px;">👉 Join the WhatsApp Broadcast Community Here</a>
+              <br><br>
+              https://chat.whatsapp.com/JCC20uRItckAjwSy76IGiq
             </p>
           </div>
 
@@ -793,8 +800,15 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
           </div>
 
           <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
-            <p style="color: #1e40af; margin: 0; font-size: 14px;">
-              <strong>Need Help?</strong> Email us at 2025eliteacademy@gmail.com or WhatsApp us at 7696954686.
+            <p style="color: #1e40af; margin: 0; font-size: 14px; text-align: center;">
+              <strong>📢 Action Required: Join Your Batch Group</strong><br>
+              Since you are an enrolled student, this WhatsApp Community is your direct lifeline to the academy for all daily operations and lecture timings.
+              <br><br>
+              <strong>Secure Your Access Now:</strong> Click the link below to join your fellow batchmates and stay updated:
+              <br><br>
+              <a href="https://chat.whatsapp.com/JCC20uRItckAjwSy76IGiq" style="display: inline-block; background: #25d366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 8px;">👉 Join the WhatsApp Broadcast Community Here</a>
+              <br><br>
+              https://chat.whatsapp.com/JCC20uRItckAjwSy76IGiq
             </p>
           </div>
 
