@@ -161,9 +161,9 @@ exports.checkCrashCourseAccess = async (req, res) => {
 
 exports.adminAddEnrollment = async (req, res) => {
   try {
-    const { fullName, fatherName, mobile, password, email, amount, sendEmail } = req.body;
+    const { fullName, fatherName, mobile, password, email, amount, sendEmail, type = "student" } = req.body;
 
-    console.log("🔍 Admin adding enrollment for:", email);
+    console.log(" Admin adding enrollment for:", email);
 
     // Validation
     if (!fullName || !fatherName || !mobile || !password || !email) {
@@ -244,6 +244,7 @@ exports.adminAddEnrollment = async (req, res) => {
       status: "confirmed",
       enrollmentMode: "admin",
       addedByAdmin: req.user.email,
+      type: type || "student",
       expiresAt: null
     });
 

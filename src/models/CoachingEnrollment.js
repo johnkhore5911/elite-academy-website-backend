@@ -19,6 +19,12 @@ const coachingEnrollmentSchema = new mongoose.Schema(
       type: String, // admin user ID or email
       required: false
     },
+    type: {
+      type: String,
+      enum: ["student", "teacher", "friend", "offline student"],
+      default: "student",
+      index: true,
+    },
     amount: { type: Number, required: true },
     razorpayOrderId: { type: String, required: true, unique: true },
     razorpayPaymentId: { type: String },
