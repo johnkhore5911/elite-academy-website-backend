@@ -21,6 +21,7 @@ const WeeklyTestSeries = require("../models/WeeklyTestSeries");
 const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
 const MonthlyCurrentAffairPurchase = require("../models/MonthlyCurrentAffairPurchase");
 const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
+const PstetEnrollment = require("../models/PstetEnrollment");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -139,6 +140,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "weekly-testseries-online" || orderDetails?.notes.purchaseType === "weekly-testseries-offline") {
     await handleWeeklyTestSeriesPayment(paymentEntity, paymentEntity.id);
+  }
+
+  if (orderDetails?.notes.purchaseType === "pstet_ctet") {
+    await handlePstetPayment(paymentEntity, paymentEntity.id);
   }
 
   if (isCoachingPurchase) {
@@ -1992,6 +1997,37 @@ async function handleWeeklyTestSeriesPayment(paymentEntity, paymentId) {
   }
 }
 
+// Handle PSTET Payment Success
+async function handlePstetPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const enrollment = await PstetEnrollment.findOne({ razorpayOrderId: orderId });
+
+    if (!enrollment) {
+      console.error(`No PSTET enrollment found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (enrollment.status === "confirmed") {
+      console.log(`PSTET payment already processed for order ${orderId}`);
+      return;
+    }
+
+    // Update enrollment status
+    enrollment.status = "confirmed";
+    enrollment.razorpayPaymentId = paymentId;
+    enrollment.expiresAt = null;
+    await enrollment.save();
+
+    // Send enrollment confirmation email
+    await sendPstetEmail(enrollment, paymentId);
+
+    console.log(`PSTET enrollment confirmed for ${enrollment.email}`);
+  } catch (error) {
+    console.error("Error handling PSTET payment:", error);
+    throw error;
+  }
+}
 
 
 module.exports = {

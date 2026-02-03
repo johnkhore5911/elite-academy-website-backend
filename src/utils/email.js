@@ -1060,9 +1060,135 @@ All the best for your exam preparation! 🌟
     text: text, 
     html: html 
   });
-  console.log(`Weekly Test Series enrollment email sent to ${email}`);
-}
+};
 
+const sendPstetEmail = async (enrollment, paymentId) => {
+  try {
+    const admin = await User.findOne({ role: "admin" });
+    
+    const userEmailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">🎯 Welcome to Elite Academy!</h1>
+          <p style="color: #fce7f3; margin-top: 10px; font-size: 16px;">PSTET & CTET 1 Month Crash Course</p>
+        </div>
+
+        <!-- Main Content -->
+        <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          
+          <p style="color: #1f2937; font-size: 16px; line-height: 1.6;">Dear <strong>${enrollment.fullName}</strong>,</p>
+          
+          <p style="color: #059669; font-size: 18px; font-weight: bold; margin: 20px 0;">
+            ✅ Payment Confirmed! Your enrollment is confirmed.
+          </p>
+
+          <!-- Course Details -->
+          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📚 Course Details:</h3>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Course:</strong> PSTET & CTET 1 Month Crash Course</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Duration:</strong> 1 Month (Till Exam)</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Start Date:</strong> 5th February 2026</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Mode:</strong> Online via Zoom Meet</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Syllabus:</strong> Complete Syllabus with Exam</p>
+            <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;">🔥 Full syllabus coverage till exam!</p>
+          </div>
+
+          <!-- WhatsApp Community -->
+          <div style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center;">
+            <h2 style="margin: 0 0 15px 0; color: white; font-size: 22px;">📱 Join WhatsApp Community</h2>
+            <p style="color: #e6fffa; margin: 0 0 15px 0; font-size: 16px;">
+              Get live class links, updates & study materials
+            </p>
+            
+            <a href="https://chat.whatsapp.com/HoRxQj00hItCfWgEQbnc7t" 
+               style="display: inline-block; background: white; color: #25d366; text-decoration: none; padding: 16px 50px; border-radius: 8px; font-weight: bold; font-size: 18px; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+              Join WhatsApp Group
+            </a>
+            
+            <p style="color: #e6fffa; margin: 15px 0 5px 0; font-size: 13px;">
+              Link: <a href="https://chat.whatsapp.com/HoRxQj00hItCfWgEQbnc7t" style="color: white; text-decoration: underline;">https://chat.whatsapp.com/HoRxQj00hItCfWgEQbnc7t</a>
+            </p>
+          </div>
+
+          <!-- Purchase Details -->
+          <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Amount Paid</td>
+                <td style="padding: 6px 0; color: #059669; text-align: right; font-weight: bold; font-size: 16px;">₹${enrollment.amount}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Payment ID</td>
+                <td style="padding: 6px 0; color: #1f2937; text-align: right; font-size: 13px;">${paymentId}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Email</td>
+                <td style="padding: 6px 0; color: #1f2937; text-align: right; font-size: 13px;">${enrollment.email}</td>
+              </tr>
+            </table>
+          </div>
+
+          <p style="color: #6b7280; margin-top: 25px; font-size: 14px;">
+            Best regards,<br>
+            <strong style="color: #1f2937;">Elite Academy Team</strong>
+          </p>
+        </div>
+      </div>
+    `;
+
+    const adminEmailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #ec4899;">🎯 New PSTET Enrollment!</h2>
+        <p>You have a new enrollment for the PSTET & CTET 1 Month Crash Course.</p>
+        
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p><strong>Student Name:</strong> ${enrollment.fullName}</p>
+          <p><strong>Student Email:</strong> ${enrollment.email}</p>
+          <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
+          <p><strong>Father's Name:</strong> ${enrollment.fatherName}</p>
+          <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
+          <p><strong>Payment ID:</strong> ${paymentId}</p>
+          <p><strong>Enrollment Date:</strong> ${new Date(enrollment.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+
+        <p style="color: #6b7280; margin-top: 30px;">
+          Best regards,<br>
+          <strong>Elite Meet System</strong>
+        </p>
+      </div>
+    `;
+
+    // Send emails
+    const emailPromises = [];
+    
+    emailPromises.push(
+      sendEmail({
+        to: enrollment.email,
+        subject: "🎯 Elite Academy - PSTET & CTET Enrollment Confirmed!",
+        html: userEmailHtml
+      })
+    );
+
+    if (admin && admin.email) {
+      emailPromises.push(
+        sendEmail({
+          to: admin.email,
+          subject: "🎯 New PSTET Enrollment - " + enrollment.fullName,
+          html: adminEmailHtml
+        })
+      );
+    }
+
+    await Promise.all(emailPromises);
+    console.log("✅ PSTET enrollment emails sent successfully to user and admin");
+    
+  } catch (error) {
+    console.error("❌ Error sending PSTET enrollment email:", error);
+    throw error;
+  }
+};
 
 // ✅ CORRECT EXPORT
 module.exports = {
@@ -1073,5 +1199,6 @@ module.exports = {
   sendPackageEmail,      // ✅ NEW - for packages
   sendCoachingEmail,
   sendCrashCourseEmail,   // ✅ NEW - for crash course
-  sendWeeklyTestSeriesEnrollmentEmail
+  sendWeeklyTestSeriesEnrollmentEmail,
+  sendPstetEmail
 };
