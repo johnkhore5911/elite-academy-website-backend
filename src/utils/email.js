@@ -2,6 +2,7 @@
 const nodemailer = require("nodemailer");
 const path = require("path");
 const fs = require("fs");
+const User = require("../models/User");
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
