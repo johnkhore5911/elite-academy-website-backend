@@ -28,7 +28,7 @@ exports.getInfo = async (req, res) => {
     package: {
       name: "⏰ 5 Months Complete Online Coaching Program starting from 1st Feb",
       price: process.env.COACHING_PRICE || 4999,
-      originalPrice: 9999,
+      originalPrice: 12999,
       description: "Prepare smart with live + recorded classes and 23,000+ PYQs."
     }
   });
