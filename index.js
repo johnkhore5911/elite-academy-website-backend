@@ -60,6 +60,7 @@ app.use("/api/videocrashcoaching", require("./src/routes/videocrashcoachingRoute
 app.use("/api/crashcourse", require("./src/routes/crashcourseRoutes.js"));
 app.use("/api/weeklytest", require("./src/routes/weeklytestSeries.js"));
 app.use("/api/pstet", require("./src/routes/pstetRoutes.js"));
+app.use("/api/excise-inspector", require("./src/routes/exciseInspectorRoutes.js"));
 app.use("/api/admin", require("./src/routes/adminRoutes")); 
 app.use("/api/inquiry", require("./src/routes/inquiryRoutes"));
 

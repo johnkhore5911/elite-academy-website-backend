@@ -12,7 +12,7 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
@@ -22,6 +22,7 @@ const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
 const MonthlyCurrentAffairPurchase = require("../models/MonthlyCurrentAffairPurchase");
 const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
 const PstetEnrollment = require("../models/PstetEnrollment");
+const ExciseInspectorEnrollment = require("../models/ExciseInspectorEnrollment");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -144,6 +145,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "pstet_ctet") {
     await handlePstetPayment(paymentEntity, paymentEntity.id);
+  }
+
+  if (orderDetails?.notes.purchaseType === "excise-inspector") {
+    await handleExciseInspectorPayment(paymentEntity, paymentEntity.id);
   }
 
   if (isCoachingPurchase) {
@@ -2025,6 +2030,38 @@ async function handlePstetPayment(paymentEntity, paymentId) {
     console.log(`PSTET enrollment confirmed for ${enrollment.email}`);
   } catch (error) {
     console.error("Error handling PSTET payment:", error);
+    throw error;
+  }
+}
+
+// Handle Excise Inspector Payment Success
+async function handleExciseInspectorPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const enrollment = await ExciseInspectorEnrollment.findOne({ razorpayOrderId: orderId });
+
+    if (!enrollment) {
+      console.error(`No Excise Inspector enrollment found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (enrollment.status === "confirmed") {
+      console.log(`Excise Inspector payment already processed for order ${orderId}`);
+      return;
+    }
+
+    // Update enrollment status
+    enrollment.status = "confirmed";
+    enrollment.razorpayPaymentId = paymentId;
+    enrollment.expiresAt = null;
+    await enrollment.save();
+
+    // Send enrollment confirmation email
+    await sendExciseInspectorEmail(enrollment, paymentId);
+
+    console.log(`Excise Inspector enrollment confirmed for ${enrollment.email}`);
+  } catch (error) {
+    console.error("Error handling Excise Inspector payment:", error);
     throw error;
   }
 }
