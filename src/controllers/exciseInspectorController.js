@@ -9,12 +9,13 @@ const razorpay = new Razorpay({
 });
 
 exports.getInfo = async (req, res) => {
+  console.log("getInfo api hit!!")
   res.json({
     package: {
       name: "🎯 Excise Inspector Exam - Complete Strategy Session",
       price: process.env.EXCISE_INSPECTOR_PRICE || 99,
       originalPrice: 299,
-      description: "Live strategy session on 23rd February with complete roadmap to crack the Excise Inspector exam."
+      description: "Live strategy session on 22nd February (Sunday) with complete roadmap to crack the Excise Inspector exam."
     }
   });
 };
@@ -23,7 +24,7 @@ exports.enrollAndCreateOrder = async (req, res) => {
   try {
     const { fullName, mobile, email } = req.body;
     const amount = process.env.EXCISE_INSPECTOR_PRICE || 99;
-
+    console.log("enrollAndCreateOrder api hit!!")
     // 1. Create Razorpay Order
     const options = {
       amount: amount * 100, // in paise
@@ -46,6 +47,7 @@ exports.enrollAndCreateOrder = async (req, res) => {
     });
 
     await newEnrollment.save();
+    console.log("enrollment saved!!")
 
     res.status(201).json({
       order,

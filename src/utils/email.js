@@ -1218,7 +1218,8 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
           <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
             <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📅 Session Details:</h3>
             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 23rd February 2026</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Time:</strong> 10am - 11am</p>
+            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 22nd February(Sunday) 2026</p>
             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Platform:</strong> Google Meet</p>
             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>What You'll Get:</strong> Complete Strategy to Crack Exam</p>
             <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;"> Google Meet link will be shared in WhatsApp community!</p>
@@ -1282,7 +1283,7 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
           <p><strong>Student Email:</strong> ${enrollment.email}</p>
           <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
           <p><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-          <p><strong>Date:</strong> 23rd February 2026</p>
+          <p><strong>Date:</strong> 22nd February(Sunday) 2026</p>
           <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
           <p><strong>Payment ID:</strong> ${paymentId}</p>
           <p><strong>Enrollment Date:</strong> ${new Date(enrollment.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
