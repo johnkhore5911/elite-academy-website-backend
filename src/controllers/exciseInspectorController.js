@@ -15,7 +15,7 @@ exports.getInfo = async (req, res) => {
       name: "🎯 Excise Inspector Exam - Complete Strategy Session",
       price: process.env.EXCISE_INSPECTOR_PRICE || 99,
       originalPrice: 299,
-      description: "Live strategy session on 22nd February (Sunday) with complete roadmap to crack the Excise Inspector exam."
+      description: "Live strategy session on 1st March (Sunday) with complete roadmap to crack the Excise Inspector exam."
     }
   });
 };

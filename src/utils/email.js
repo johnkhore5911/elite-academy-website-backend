@@ -1191,108 +1191,234 @@ const sendPstetEmail = async (enrollment, paymentId) => {
   }
 };
 
+// const sendExciseInspectorEmail = async (enrollment, paymentId) => {
+//   try {
+//     const admin = await User.findOne({ role: "admin" });
+//     const whatsappCommunityLink = process.env.EXCISE_INSPECTOR_WHATSAPP_LINK || "https://chat.whatsapp.com/K5QXPcLBC8aCE62BGerXoK";
+//     const googleMeetLink = "https://meet.google.com/ekh-ertg-hti";
+//     const userEmailHtml = `
+//       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
+        
+//         <!-- Header -->
+//         <div style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+//           <h1 style="color: white; margin: 0; font-size: 28px;">🎯 Welcome to Elite Academy!</h1>
+//           <p style="color: #fed7aa; margin-top: 10px; font-size: 16px;">Excise Inspector Exam Strategy Session</p>
+//         </div>
+
+//         <!-- Main Content -->
+//         <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          
+//           <p style="color: #1f2937; font-size: 16px; line-height: 1.6;">Dear <strong>${enrollment.fullName}</strong>,</p>
+          
+//           <p style="color: #059669; font-size: 18px; font-weight: bold; margin: 20px 0;">
+//             ✅ Payment Confirmed! Your registration is confirmed.
+//           </p>
+
+//           <!-- Session Details -->
+//           <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+//             <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📅 Session Details:</h3>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Time:</strong> 10am - 11am</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 1st March(Sunday) 2026</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Platform:</strong> Google Meet</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>What You'll Get:</strong> Complete Strategy to Crack Exam</p>
+//             <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;"> Google Meet link will be shared in WhatsApp community!</p>
+//           </div>
+
+//           <!-- WhatsApp Community -->
+//           <div style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center;">
+//             <h2 style="margin: 0 0 15px 0; color: white; font-size: 22px;">📱 Join WhatsApp Community</h2>
+//             <p style="color: #e6fffa; margin: 0 0 15px 0; font-size: 16px;">
+//               Get Google Meet link, updates & study materials
+//             </p>
+            
+//             <a href="${whatsappCommunityLink}" 
+//                style="display: inline-block; background: white; color: #25d366; text-decoration: none; padding: 16px 50px; border-radius: 8px; font-weight: bold; font-size: 18px; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+//               Join WhatsApp Group
+//             </a>
+            
+//             <p style="color: #e6fffa; margin: 15px 0 5px 0; font-size: 13px;">
+//               Link: <a href="${whatsappCommunityLink}" style="color: white; text-decoration: underline;">${whatsappCommunityLink}</a>
+//             </p>
+//           </div>
+
+//           <!-- Payment Bill -->
+//           <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+//             <h3 style="color: #1e40af; margin-top: 0; font-size: 18px;">🧾 Payment Details:</h3>
+//             <table style="width: 100%; border-collapse: collapse;">
+//               <tr>
+//                 <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Course</strong></td>
+//                 <td style="padding: 8px 0; color: #1f2937; text-align: right; border-bottom: 1px solid #e5e7eb;">Excise Inspector Strategy Session</td>
+//               </tr>
+//               <tr>
+//                 <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Amount Paid</strong></td>
+//                 <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: bold; border-bottom: 1px solid #e5e7eb;">₹${enrollment.amount}</td>
+//               </tr>
+//               <tr>
+//                 <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Payment ID</strong></td>
+//                 <td style="padding: 8px 0; color: #1f2937; text-align: right; font-size: 13px; border-bottom: 1px solid #e5e7eb;">${paymentId}</td>
+//               </tr>
+//               <tr>
+//                 <td style="padding: 8px 0; color: #4b5563;"><strong>Payment Date</strong></td>
+//                 <td style="padding: 8px 0; color: #1f2937; text-align: right;">${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' })}</td>
+//               </tr>
+//             </table>
+//           </div>
+
+//           <p style="color: #6b7280; margin-top: 25px; font-size: 14px;">
+//             Best regards,<br>
+//             <strong style="color: #1f2937;">Elite Academy Team</strong>
+//           </p>
+//         </div>
+//       </div>
+//     `;
+
+//     const adminEmailHtml = `
+//       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+//         <h2 style="color: #f97316;">🎯 New Excise Inspector Enrollment!</h2>
+//         <p>You have a new enrollment for Excise Inspector Exam Strategy Session.</p>
+        
+//         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+//           <p><strong>Student Name:</strong> ${enrollment.fullName}</p>
+//           <p><strong>Student Email:</strong> ${enrollment.email}</p>
+//           <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
+//           <p><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
+//           <p><strong>Date:</strong> 1st March(Sunday) 2026</p>
+//           <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
+//           <p><strong>Meet Link Provided:</strong> ${googleMeetLink}</p>
+//           <p><strong>Payment ID:</strong> ${paymentId}</p>
+//           <p><strong>Enrollment Date:</strong> ${new Date(enrollment.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+//         </div>
+
+//         <p style="color: #6b7280; margin-top: 30px;">
+//           Best regards,<br>
+//           <strong>Elite Academy Team</strong>
+//         </p>
+//       </div>
+//     `;
+
+//     // Send emails
+//     const emailPromises = [];
+    
+//     emailPromises.push(
+//       sendEmail({
+//         to: enrollment.email,
+//         subject: "🎯 Elite Academy - Excise Inspector Session Confirmed!",
+//         html: userEmailHtml
+//       })
+//     );
+
+//     if (admin && admin.email) {
+//       emailPromises.push(
+//         sendEmail({
+//           to: admin.email,
+//           subject: "🎯 New Excise Inspector Enrollment - " + enrollment.fullName,
+//           html: adminEmailHtml
+//         })
+//       );
+//     }
+
+//     await Promise.all(emailPromises);
+//     console.log("✅ Excise Inspector enrollment emails sent successfully to user and admin");
+    
+//   } catch (error) {
+//     console.error("❌ Error sending Excise Inspector enrollment email:", error);
+//     throw error;
+//   }
+// };
+
+
 const sendExciseInspectorEmail = async (enrollment, paymentId) => {
   try {
     const admin = await User.findOne({ role: "admin" });
-    const whatsappCommunityLink = process.env.EXCISE_INSPECTOR_WHATSAPP_LINK || "https://chat.whatsapp.com/DRj0jxdSZh9LirB3qwaXwq";
-    
+    const whatsappCommunityLink = process.env.EXCISE_INSPECTOR_WHATSAPP_LINK || "https://chat.whatsapp.com/K5QXPcLBC8aCE62BGerXoK";
+    const googleMeetLink = "https://meet.google.com/ekh-ertg-hti";
+
     const userEmailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9fafb; padding: 20px;">
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 550px; margin: 0 auto; background-color: #f3f4f6; padding: 15px;">
         
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px;">🎯 Welcome to Elite Academy!</h1>
-          <p style="color: #fed7aa; margin-top: 10px; font-size: 16px;">Excise Inspector Exam Strategy Session</p>
+        <div style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%); padding: 25px 20px; border-radius: 12px 12px 0 0; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 26px; letter-spacing: 1px;">ELITE ACADEMY</h1>
+          <p style="color: #fed7aa; margin: 5px 0 0 0; font-size: 14px; text-transform: uppercase; font-weight: bold;">Excise Inspector Strategy Session</p>
         </div>
 
-        <!-- Main Content -->
-        <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background-color: white; padding: 25px 20px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
           
-          <p style="color: #1f2937; font-size: 16px; line-height: 1.6;">Dear <strong>${enrollment.fullName}</strong>,</p>
+          <p style="color: #1f2937; font-size: 16px;">Dear <strong>${enrollment.fullName}</strong>,</p>
           
-          <p style="color: #059669; font-size: 18px; font-weight: bold; margin: 20px 0;">
-            ✅ Payment Confirmed! Your registration is confirmed.
+          <p style="color: #059669; font-size: 17px; font-weight: bold; margin: 15px 0;">
+            ✅ Payment Confirmed! Your seat is reserved.
           </p>
 
-          <!-- Session Details -->
-          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-            <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📅 Session Details:</h3>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Time:</strong> 10am - 11am</p>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 22nd February(Sunday) 2026</p>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Platform:</strong> Google Meet</p>
-            <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>What You'll Get:</strong> Complete Strategy to Crack Exam</p>
-            <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;"> Google Meet link will be shared in WhatsApp community!</p>
-          </div>
-
-          <!-- WhatsApp Community -->
-          <div style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center;">
-            <h2 style="margin: 0 0 15px 0; color: white; font-size: 22px;">📱 Join WhatsApp Community</h2>
-            <p style="color: #e6fffa; margin: 0 0 15px 0; font-size: 16px;">
-              Get Google Meet link, updates & study materials
-            </p>
-            
-            <a href="${whatsappCommunityLink}" 
-               style="display: inline-block; background: white; color: #25d366; text-decoration: none; padding: 16px 50px; border-radius: 8px; font-weight: bold; font-size: 18px; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-              Join WhatsApp Group
+          <div style="background: #fef2f2; border: 2px dashed #dc2626; border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
+            <h3 style="color: #991b1b; margin: 0 0 10px 0; font-size: 18px;">🔗 Your Google Meet Link</h3>
+            <a href="${googleMeetLink}" style="color: #dc2626; font-size: 16px; font-weight: bold; text-decoration: underline; word-break: break-all;">
+              ${googleMeetLink}
             </a>
-            
-            <p style="color: #e6fffa; margin: 15px 0 5px 0; font-size: 13px;">
-              Link: <a href="${whatsappCommunityLink}" style="color: white; text-decoration: underline;">${whatsappCommunityLink}</a>
-            </p>
+            <p style="margin-top: 10px; font-size: 13px; color: #7f1d1d;">Please save this link. You will join the session using this.</p>
           </div>
 
-          <!-- Payment Bill -->
-          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-            <h3 style="color: #1e40af; margin-top: 0; font-size: 18px;">🧾 Payment Details:</h3>
-            <table style="width: 100%; border-collapse: collapse;">
+          <div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+            <h4 style="color: #9a3412; margin: 0 0 10px 0; font-size: 16px;">📅 Session Details</h4>
+            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
+            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Date:</strong> 1st March 2026 (Sunday)</p>
+            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Agenda:</strong> Complete Strategy to Crack Exam</p>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px;">
+            <h3 style="margin: 0 0 10px 0; color: white; font-size: 20px;">📱 Join WhatsApp Community</h3>
+            <p style="color: #e6fffa; margin: 0 0 20px 0; font-size: 14px;">
+              Join to receive the Meet link again before the session, plus study materials and updates.
+            </p>
+            <a href="${whatsappCommunityLink}" 
+               style="display: inline-block; background: white; color: #25d366; text-decoration: none; padding: 14px 35px; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+              Join Community Now
+            </a>
+          </div>
+
+          <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <h3 style="color: #475569; margin: 0 0 15px 0; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">🧾 Tax Invoice / Receipt</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
               <tr>
-                <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Course</strong></td>
-                <td style="padding: 8px 0; color: #1f2937; text-align: right; border-bottom: 1px solid #e5e7eb;">Excise Inspector Strategy Session</td>
+                <td style="padding: 8px 0; color: #64748b;">Course</td>
+                <td style="padding: 8px 0; color: #1e293b; text-align: right; font-weight: 500;">Excise Strategy Session</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Amount Paid</strong></td>
-                <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: bold; border-bottom: 1px solid #e5e7eb;">₹${enrollment.amount}</td>
+                <td style="padding: 8px 0; color: #64748b;">Amount Paid</td>
+                <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: bold;">₹${enrollment.amount}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #4b5563; border-bottom: 1px solid #e5e7eb;"><strong>Payment ID</strong></td>
-                <td style="padding: 8px 0; color: #1f2937; text-align: right; font-size: 13px; border-bottom: 1px solid #e5e7eb;">${paymentId}</td>
+                <td style="padding: 8px 0; color: #64748b;">Payment ID</td>
+                <td style="padding: 8px 0; color: #1e293b; text-align: right; font-size: 12px;">${paymentId}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; color: #4b5563;"><strong>Payment Date</strong></td>
-                <td style="padding: 8px 0; color: #1f2937; text-align: right;">${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' })}</td>
+                <td style="padding: 8px 0; color: #64748b;">Date</td>
+                <td style="padding: 8px 0; color: #1e293b; text-align: right;">${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' })}</td>
               </tr>
             </table>
           </div>
 
-          <p style="color: #6b7280; margin-top: 25px; font-size: 14px;">
-            Best regards,<br>
-            <strong style="color: #1f2937;">Elite Academy Team</strong>
-          </p>
+          <div style="margin-top: 30px; text-align: center; border-top: 1px solid #f3f4f6; padding-top: 20px;">
+            <p style="color: #6b7280; font-size: 14px; margin: 0;">
+              Best regards,<br>
+              <strong style="color: #1f2937;">Elite Academy Team</strong>
+            </p>
+          </div>
         </div>
       </div>
     `;
 
     const adminEmailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #f97316;">🎯 New Excise Inspector Enrollment!</h2>
-        <p>You have a new enrollment for Excise Inspector Exam Strategy Session.</p>
-        
-        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Student Name:</strong> ${enrollment.fullName}</p>
-          <p><strong>Student Email:</strong> ${enrollment.email}</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h2 style="color: #f97316;">🎯 New Enrollment Alert!</h2>
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+          <p><strong>Name:</strong> ${enrollment.fullName}</p>
+          <p><strong>Email:</strong> ${enrollment.email}</p>
           <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
-          <p><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-          <p><strong>Date:</strong> 22nd February(Sunday) 2026</p>
           <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
           <p><strong>Payment ID:</strong> ${paymentId}</p>
-          <p><strong>Enrollment Date:</strong> ${new Date(enrollment.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p><strong>Google Meet Link:</strong> ${googleMeetLink}</p>
         </div>
-
-        <p style="color: #6b7280; margin-top: 30px;">
-          Best regards,<br>
-          <strong>Elite Academy Team</strong>
-        </p>
       </div>
     `;
 
@@ -1302,7 +1428,7 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
     emailPromises.push(
       sendEmail({
         to: enrollment.email,
-        subject: "🎯 Elite Academy - Excise Inspector Session Confirmed!",
+        subject: "🎯 Elite Academy - Your Session Link & Confirmation",
         html: userEmailHtml
       })
     );
@@ -1311,14 +1437,14 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
       emailPromises.push(
         sendEmail({
           to: admin.email,
-          subject: "🎯 New Excise Inspector Enrollment - " + enrollment.fullName,
+          subject: "Elite Academy: New Excise Enrollment - " + enrollment.fullName,
           html: adminEmailHtml
         })
       );
     }
 
     await Promise.all(emailPromises);
-    console.log("✅ Excise Inspector enrollment emails sent successfully to user and admin");
+    console.log("✅ Excise Inspector emails (with Meet link) sent successfully");
     
   } catch (error) {
     console.error("❌ Error sending Excise Inspector enrollment email:", error);
