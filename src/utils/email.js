@@ -1327,6 +1327,87 @@ const sendPstetEmail = async (enrollment, paymentId) => {
 //   }
 // };
 
+const JOB_MEET_LINK = "https://meet.google.com/odo-sbtm-syw";
+
+const sendJobApplicationEmail = async (application, paymentId) => {
+  try {
+    const admin = await User.findOne({ role: "admin" });
+    const roleLabels = { "data-entry": "Data Entry", "teacher": "Teacher", "content-creator": "Content Creator" };
+    const roleLabel = roleLabels[application.role] || application.role;
+
+    const userEmailHtml = `
+      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;background:#f8fafc;padding:12px;">
+        <div style="background:linear-gradient(135deg,#0f766e 0%,#134e4a 100%);padding:20px 16px;border-radius:8px 8px 0 0;text-align:center;">
+          <h1 style="color:#fff;margin:0;font-size:22px;letter-spacing:0.5px;">Elite Academy</h1>
+          <p style="color:#99f6e4;margin:4px 0 0 0;font-size:13px;font-weight:600;">Job Application – Registration Confirmed</p>
+        </div>
+        <div style="background:#fff;padding:20px 16px;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <p style="color:#1e293b;font-size:15px;margin:0 0 12px 0;">Dear <strong>${application.fullName}</strong>,</p>
+          <p style="color:#059669;font-size:16px;font-weight:bold;margin:0 0 16px 0;">Your registration and payment are successful.</p>
+          <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:12px 14px;margin:0 0 14px 0;border-radius:4px;">
+            <h3 style="color:#065f46;margin:0 0 8px 0;font-size:15px;">Application details</h3>
+            <p style="margin:4px 0;font-size:14px;color:#374151;"><strong>Role:</strong> ${roleLabel}</p>
+            <p style="margin:4px 0;font-size:14px;color:#374151;"><strong>Contract:</strong> ${(application.contract || "").replace("month", " Months")}</p>
+            <p style="margin:4px 0;font-size:14px;color:#374151;"><strong>Interview slot:</strong> ${application.interviewSlot || "As selected"}</p>
+          </div>
+          <div style="background:#ecfdf5;border:1px solid #a7f3d0;padding:14px;margin:0 0 14px 0;border-radius:6px;text-align:center;">
+            <h3 style="color:#047857;margin:0 0 8px 0;font-size:15px;">Interview – Google Meet</h3>
+            <p style="margin:0 0 6px 0;font-size:13px;color:#065f46;">Please join <strong>5 minutes before</strong> your scheduled time.</p>
+            <a href="${JOB_MEET_LINK}" style="color:#047857;font-size:14px;font-weight:bold;text-decoration:underline;word-break:break-all;">${JOB_MEET_LINK}</a>
+          </div>
+          <div style="background:#f8fafc;padding:12px;border-radius:6px;border:1px solid #e2e8f0;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <tr><td style="padding:4px 0;color:#64748b;">Amount paid</td><td style="padding:4px 0;color:#059669;text-align:right;font-weight:bold;">${application.currency === 'INR' ? '₹' : '$'}${application.amount}</td></tr>
+              <tr><td style="padding:4px 0;color:#64748b;">Payment ID</td><td style="padding:4px 0;color:#334155;text-align:right;">${paymentId}</td></tr>
+            </table>
+          </div>
+          <p style="color:#64748b;margin:16px 0 0 0;font-size:13px;">Best regards,<br><strong style="color:#1e293b;">Elite Academy Team</strong></p>
+        </div>
+      </div>
+    `;
+
+    const adminEmailHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#333;padding:12px;">
+        <h2 style="color:#0f766e;margin:0 0 12px 0;font-size:18px;">New job application (paid)</h2>
+        <div style="background:#f1f5f9;padding:14px;border-radius:6px;border:1px solid #e2e8f0;font-size:14px;">
+          <p style="margin:4px 0;"><strong>Name:</strong> ${application.fullName}</p>
+          <p style="margin:4px 0;"><strong>Email:</strong> ${application.email}</p>
+          <p style="margin:4px 0;"><strong>Phone:</strong> ${application.phone}</p>
+          <p style="margin:4px 0;"><strong>Country:</strong> ${application.country}</p>
+          <p style="margin:4px 0;"><strong>Role:</strong> ${roleLabel}</p>
+          <p style="margin:4px 0;"><strong>Contract:</strong> ${application.contract}</p>
+          <p style="margin:4px 0;"><strong>Interview slot:</strong> ${application.interviewSlot}</p>
+          <p style="margin:4px 0;"><strong>Amount:</strong> ${application.currency === 'INR' ? '₹' : '$'}${application.amount}</p>
+          <p style="margin:4px 0;"><strong>Payment ID:</strong> ${paymentId}</p>
+          <p style="margin:4px 0;"><strong>Resume:</strong> <a href="${application.resumeUrl}">View resume</a></p>
+        </div>
+        <p style="color:#64748b;margin:12px 0 0 0;font-size:13px;">Best regards,<br><strong>Elite Meet System</strong></p>
+      </div>
+    `;
+
+    const emailPromises = [
+      sendEmail({
+        to: application.email,
+        subject: "Elite Academy – Job application registered successfully",
+        html: userEmailHtml,
+      }),
+    ];
+    if (admin && admin.email) {
+      emailPromises.push(
+        sendEmail({
+          to: admin.email,
+          subject: "New job application (paid) – " + application.fullName,
+          html: adminEmailHtml,
+        })
+      );
+    }
+    await Promise.all(emailPromises);
+    console.log("Job application emails sent to user and admin");
+  } catch (error) {
+    console.error("Error sending job application email:", error);
+    throw error;
+  }
+};
 
 const sendExciseInspectorEmail = async (enrollment, paymentId) => {
   try {
@@ -1463,5 +1544,6 @@ module.exports = {
   sendCrashCourseEmail,   // NEW - for crash course
   sendWeeklyTestSeriesEnrollmentEmail,
   sendPstetEmail,
-  sendExciseInspectorEmail
+  sendExciseInspectorEmail,
+  sendJobApplicationEmail,
 };

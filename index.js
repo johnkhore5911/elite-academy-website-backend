@@ -1,12 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
+const { cloudinaryConnect } = require("./src/config/cloudinary");
 require("dotenv").config();
 
 const app = express();
 
 // Database connection
 connectDB();
+// Cloudinary (for job resume uploads)
+cloudinaryConnect();
 
 // CORS configuration
 app.use(cors({
@@ -58,6 +61,7 @@ app.use("/api/coaching", require("./src/routes/coachingRoutes"));
 app.use("/api/videocoaching", require("./src/routes/videocoachingRoutes"));
 app.use("/api/videocrashcoaching", require("./src/routes/videocrashcoachingRoutes"));
 app.use("/api/crashcourse", require("./src/routes/crashcourseRoutes.js"));
+app.use("/api/job", require("./src/routes/jobRoutes.js"));
 app.use("/api/weeklytest", require("./src/routes/weeklytestSeries.js"));
 app.use("/api/pstet", require("./src/routes/pstetRoutes.js"));
 app.use("/api/excise-inspector", require("./src/routes/exciseInspectorRoutes.js"));

@@ -12,7 +12,7 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail, sendJobApplicationEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
@@ -23,6 +23,7 @@ const MonthlyCurrentAffairPurchase = require("../models/MonthlyCurrentAffairPurc
 const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
 const PstetEnrollment = require("../models/PstetEnrollment");
 const ExciseInspectorEnrollment = require("../models/ExciseInspectorEnrollment");
+const JobApplication = require("../models/jobApplication");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -149,6 +150,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "excise-inspector") {
     await handleExciseInspectorPayment(paymentEntity, paymentEntity.id);
+  }
+
+  if (orderDetails?.notes.purchaseType === "job_application") {
+    await handleJobApplicationPayment(paymentEntity, paymentEntity.id);
   }
 
   if (isCoachingPurchase) {
@@ -2066,6 +2071,34 @@ async function handleExciseInspectorPayment(paymentEntity, paymentId) {
   }
 }
 
+// Handle Job Application Payment Success
+async function handleJobApplicationPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const application = await JobApplication.findOne({ razorpayOrderId: orderId });
+
+    if (!application) {
+      console.error(`No job application found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (application.status === "confirmed") {
+      console.log(`Job application payment already processed for order ${orderId}`);
+      return;
+    }
+
+    application.status = "confirmed";
+    application.razorpayPaymentId = paymentId;
+    application.expiresAt = null;
+    await application.save();
+
+    await sendJobApplicationEmail(application, paymentId);
+    console.log(`Job application confirmed for ${application.email}`);
+  } catch (error) {
+    console.error("Error handling job application payment:", error);
+    throw error;
+  }
+}
 
 module.exports = {
   handleRazorpayWebhook,
