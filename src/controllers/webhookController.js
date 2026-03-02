@@ -12,7 +12,7 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail, sendJobApplicationEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail, sendJobApplicationEmail, sendFrenchCourseEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
@@ -24,6 +24,7 @@ const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
 const PstetEnrollment = require("../models/PstetEnrollment");
 const ExciseInspectorEnrollment = require("../models/ExciseInspectorEnrollment");
 const JobApplication = require("../models/jobApplication");
+const FrenchCourse = require("../models/frenchCourse");
 
 // Get PDF links from ENV
 const getPDFLinks = () => ({
@@ -154,6 +155,12 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "job_application") {
     await handleJobApplicationPayment(paymentEntity, paymentEntity.id);
+    return res.json({ status: "ok" });
+  }
+
+  if (orderDetails?.notes.purchaseType === "french_course") {
+    await handleFrenchCoursePayment(paymentEntity, paymentEntity.id);
+    return res.json({ status: "ok" });
   }
 
   if (isCoachingPurchase) {
@@ -2083,7 +2090,8 @@ async function handleJobApplicationPayment(paymentEntity, paymentId) {
     }
 
     if (application.status === "confirmed") {
-      console.log(`Job application payment already processed for order ${orderId}`);
+      console.log(`Job application payment already processed for order ${orderId}; sending confirmation email.`);
+      await sendJobApplicationEmail(application, paymentId);
       return;
     }
 
@@ -2096,6 +2104,36 @@ async function handleJobApplicationPayment(paymentEntity, paymentId) {
     console.log(`Job application confirmed for ${application.email}`);
   } catch (error) {
     console.error("Error handling job application payment:", error);
+    throw error;
+  }
+}
+
+// Handle French Course Payment Success
+async function handleFrenchCoursePayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const enrollment = await FrenchCourse.findOne({ razorpayOrderId: orderId });
+
+    if (!enrollment) {
+      console.error(`No French course enrollment found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (enrollment.status === "confirmed") {
+      console.log(`French course payment already processed for order ${orderId}; sending confirmation email.`);
+      await sendFrenchCourseEmail(enrollment, paymentId);
+      return;
+    }
+
+    enrollment.status = "confirmed";
+    enrollment.razorpayPaymentId = paymentId;
+    enrollment.expiresAt = null;
+    await enrollment.save();
+
+    await sendFrenchCourseEmail(enrollment, paymentId);
+    console.log(`French course enrollment confirmed for ${enrollment.email}`);
+  } catch (error) {
+    console.error("Error handling French course payment:", error);
     throw error;
   }
 }

@@ -1533,6 +1533,153 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
   }
 };
 
+// French Course Email
+const sendFrenchCourseEmail = async (enrollment, paymentId) => {
+  try {
+    const admin = await User.findOne({ role: "admin" });
+    const meetLink = "https://meet.google.com/qxi-matr-qqq";
+    const whatsappLink = "https://chat.whatsapp.com/CakJQWEFTY56LVtPTZNJmM";
+
+    const userEmailHtml = `
+      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;background:#f0f4f8;padding:20px;">
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:28px 20px;border-radius:12px 12px 0 0;text-align:center;">
+          <div style="font-size:42px;margin-bottom:8px;">🇫🇷</div>
+          <h1 style="color:#fff;margin:0;font-size:26px;font-weight:700;letter-spacing:0.5px;">Elite Academy</h1>
+          <p style="color:#e0e7ff;margin:6px 0 0 0;font-size:14px;font-weight:500;">French Language Course – Enrollment Confirmed 🎉</p>
+        </div>
+        
+        <!-- Body -->
+        <div style="background:#fff;padding:28px 24px;border-radius:0 0 12px 12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+          <p style="color:#1e293b;font-size:16px;margin:0 0 14px 0;">Dear <strong style="color:#4f46e5;">${enrollment.fullName}</strong>,</p>
+          
+          <div style="background:linear-gradient(135deg,#dcfce7 0%,#d1fae5 100%);border:1px solid #86efac;border-radius:10px;padding:16px 20px;margin:0 0 20px 0;text-align:center;">
+            <div style="font-size:28px;margin-bottom:6px;">✅</div>
+            <p style="color:#166534;font-size:17px;font-weight:700;margin:0;">Your enrollment and payment are successful!</p>
+            <p style="color:#22c55e;font-size:13px;margin:6px 0 0 0;">Welcome to your French learning journey</p>
+          </div>
+          
+          <!-- Course Details -->
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin:0 0 20px 0;">
+            <h3 style="color:#4f46e5;margin:0 0 14px 0;font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;">
+              <span>📚</span> Course Details
+            </h3>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+              <tr>
+                <td style="padding:8px 0;color:#64748b;width:100px;">Plan</td>
+                <td style="padding:8px 0;color:#1e293b;font-weight:500;">${enrollment.planLabel}</td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;color:#64748b;">Duration</td>
+                <td style="padding:8px 0;color:#1e293b;font-weight:500;">${enrollment.plan === '1month' ? '1 Month (Basic to Intermediate)' : '3 Months (Basic to Advanced - PR Ready)'}</td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;color:#64748b;">Schedule</td>
+                <td style="padding:8px 0;color:#1e293b;font-weight:500;">Monday to Friday | 7:00 PM IST</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Access Links Section -->
+          <div style="background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);border:1px solid #3b82f6;border-radius:10px;padding:20px;margin:0 0 20px 0;">
+            <h3 style="color:#1d4ed8;margin:0 0 16px 0;font-size:16px;font-weight:600;text-align:center;">
+              🔗 Your Class Access Links
+            </h3>
+            
+            <!-- Google Meet -->
+            <div style="background:#fff;border:1px solid #bfdbfe;border-radius:8px;padding:16px;margin:0 0 12px 0;text-align:center;">
+              <div style="font-size:24px;margin-bottom:6px;">🎥</div>
+              <p style="margin:0 0 10px 0;font-size:13px;color:#64748b;font-weight:500;">Join Daily Live Classes</p>
+              <a href="${meetLink}" style="display:inline-block;background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:8px;box-shadow:0 2px 8px rgba(34,197,94,0.3);">👉 Join Google Meet</a>
+              <p style="margin:10px 0 0 0;font-size:11px;color:#94a3b8;word-break:break-all;">${meetLink}</p>
+            </div>
+            
+            <!-- WhatsApp -->
+            <div style="background:#fff;border:1px solid #86efac;border-radius:8px;padding:16px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:6px;">💬</div>
+              <p style="margin:0 0 10px 0;font-size:13px;color:#64748b;font-weight:500;">Join WhatsApp Community</p>
+              <a href="${whatsappLink}" style="display:inline-block;background:linear-gradient(135deg,#25d366 0%,#128c7e 100%);color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:12px 24px;border-radius:8px;box-shadow:0 2px 8px rgba(37,211,102,0.3);">👉 Join WhatsApp Group</a>
+              <p style="margin:10px 0 0 0;font-size:11px;color:#94a3b8;word-break:break-all;">${whatsappLink}</p>
+            </div>
+          </div>
+
+          <!-- Payment Info -->
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin:0 0 18px 0;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <tr>
+                <td style="padding:6px 0;color:#64748b;">💳 Amount Paid</td>
+                <td style="padding:6px 0;color:#16a34a;text-align:right;font-weight:700;font-size:15px;">${enrollment.currency === 'INR' ? '₹' : '$'}${enrollment.amount}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#64748b;">🆔 Payment ID</td>
+                <td style="padding:6px 0;color:#475569;text-align:right;font-family:monospace;font-size:12px;">${paymentId}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Important Notes -->
+          <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:16px;margin:0 0 18px 0;">
+            <h4 style="color:#b45309;margin:0 0 10px 0;font-size:14px;font-weight:600;">⚠️ Important Guidelines</h4>
+            <ul style="margin:0;padding-left:18px;font-size:13px;color:#92400e;line-height:1.8;">
+              <li>Join Google Meet <strong>5 minutes before</strong> class starts</li>
+              <li>Join WhatsApp group for announcements & recordings</li>
+              <li>All class recordings will be shared in the WhatsApp community</li>
+              <li>Keep your camera on during classes for better interaction</li>
+            </ul>
+          </div>
+
+          <!-- Footer -->
+          <div style="border-top:1px solid #e2e8f0;padding-top:18px;text-align:center;">
+            <p style="color:#64748b;margin:0 0 4px 0;font-size:13px;">Need help? Contact us at</p>
+            <a href="mailto:2025eliteacademy@gmail.com" style="color:#4f46e5;font-size:13px;font-weight:500;text-decoration:none;">2025eliteacademy@gmail.com</a>
+            <p style="color:#94a3b8;margin:14px 0 0 0;font-size:12px;">Best regards,<br><strong style="color:#4f46e5;">Elite Academy Team</strong></p>
+          </div>
+        </div>
+        
+        <p style="color:#94a3b8;text-align:center;font-size:11px;margin-top:14px;">This is an automated email. Please do not reply.</p>
+      </div>
+    `;
+
+    const adminEmailHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#333;padding:12px;">
+        <h2 style="color:#4f46e5;margin:0 0 12px 0;font-size:18px;">🇫🇷 New French Course Enrollment (paid)</h2>
+        <div style="background:#eff6ff;padding:14px;border-radius:6px;border:1px solid #bfdbfe;font-size:14px;">
+          <p style="margin:4px 0;"><strong>Name:</strong> ${enrollment.fullName}</p>
+          <p style="margin:4px 0;"><strong>Email:</strong> ${enrollment.email}</p>
+          <p style="margin:4px 0;"><strong>Phone:</strong> ${enrollment.phone}</p>
+          <p style="margin:4px 0;"><strong>Country:</strong> ${enrollment.country}</p>
+          <p style="margin:4px 0;"><strong>Plan:</strong> ${enrollment.planLabel}</p>
+          <p style="margin:4px 0;"><strong>Amount:</strong> ${enrollment.currency === 'INR' ? '₹' : '$'}${enrollment.amount}</p>
+          <p style="margin:4px 0;"><strong>Payment ID:</strong> ${paymentId}</p>
+        </div>
+        <p style="color:#64748b;margin:12px 0 0 0;font-size:13px;">Best regards,<br><strong>Elite Meet System</strong></p>
+      </div>
+    `;
+
+    const emailPromises = [
+      sendEmail({
+        to: enrollment.email,
+        subject: "🇫🇷 Elite Academy – French Course Enrollment Confirmed! 🎉",
+        html: userEmailHtml,
+      }),
+    ];
+    if (admin && admin.email) {
+      emailPromises.push(
+        sendEmail({
+          to: admin.email,
+          subject: "🇫🇷 New French Course Enrollment – " + enrollment.fullName,
+          html: adminEmailHtml,
+        })
+      );
+    }
+    await Promise.all(emailPromises);
+    console.log("✅ French course emails sent to user and admin");
+  } catch (error) {
+    console.error("❌ Error sending French course email:", error);
+    throw error;
+  }
+};
+
 // CORRECT EXPORT
 module.exports = {
   sendEmail,
@@ -1546,4 +1693,5 @@ module.exports = {
   sendPstetEmail,
   sendExciseInspectorEmail,
   sendJobApplicationEmail,
+  sendFrenchCourseEmail,
 };
