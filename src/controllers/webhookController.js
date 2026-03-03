@@ -18,7 +18,9 @@ const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCourse = require("../models/CrashCourse");
 const WeeklyTestSeries = require("../models/WeeklyTestSeries");
+const SectionalTestSeries = require("../models/SectionalTestSeries");
 const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
+const { sendSectionalTestSeriesEnrollmentEmail } = require("../utils/email");
 const MonthlyCurrentAffairPurchase = require("../models/MonthlyCurrentAffairPurchase");
 const MonthlyCurrentAffair = require("../models/MonthlyCurrentAffair");
 const PstetEnrollment = require("../models/PstetEnrollment");
@@ -143,6 +145,10 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "weekly-testseries-online" || orderDetails?.notes.purchaseType === "weekly-testseries-offline") {
     await handleWeeklyTestSeriesPayment(paymentEntity, paymentEntity.id);
+  }
+
+  if (orderDetails?.notes.purchaseType === "sectional-testseries-online" || orderDetails?.notes.purchaseType === "sectional-testseries-offline") {
+    await handleSectionalTestSeriesPayment(paymentEntity, paymentEntity.id);
   }
 
   if (orderDetails?.notes.purchaseType === "pstet_ctet") {
@@ -2010,6 +2016,49 @@ async function handleWeeklyTestSeriesPayment(paymentEntity, paymentId) {
     console.log(`Weekly Test Series enrollment confirmed for ${enrollment.email} - ${mode} mode`);
   } catch (error) {
     console.error("Error handling weekly test series payment:", error);
+    throw error;
+  }
+}
+
+// Handle Sectional Test Series Payment Success
+async function handleSectionalTestSeriesPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const enrollment = await SectionalTestSeries.findOne({ razorpayOrderId: orderId });
+
+    if (!enrollment) {
+      console.error(`No sectional test series enrollment found for order ID: ${orderId}`);
+      return;
+    }
+
+    if (enrollment.status === "confirmed") {
+      console.log(`Sectional test series payment already processed for order ${orderId}`);
+      return;
+    }
+
+    // Update enrollment status
+    enrollment.status = "confirmed";
+    enrollment.razorpayPaymentId = paymentId;
+    await enrollment.save();
+
+    // Determine if online or offline based on enrollment mode
+    const mode = enrollment.mode;
+
+    // Send enrollment confirmation email
+    await sendSectionalTestSeriesEnrollmentEmail({
+      email: enrollment.email,
+      fullName: enrollment.fullName,
+      mobile: enrollment.mobile,
+      appPassword: enrollment.appPassword,
+      amount: enrollment.amount,
+      paymentId: paymentId,
+      mode: mode,
+      fatherName: enrollment.fatherName
+    });
+
+    console.log(`Sectional Test Series enrollment confirmed for ${enrollment.email} - ${mode} mode`);
+  } catch (error) {
+    console.error("Error handling sectional test series payment:", error);
     throw error;
   }
 }

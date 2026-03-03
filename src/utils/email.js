@@ -628,7 +628,7 @@ const sendCoachingEmail = async (enrollment, pdfLinks, paymentId) => {
             <h3 style="color: #111827; font-size: 16px;">🏢 Visit Our Institute</h3>
             <p style="font-size: 13px; color: #475569; line-height: 1.5;">
               <strong>Elite Academy</strong><br>
-              <a href="https://maps.google.com/?q=Elite+Academy+SCO-212+Sector+24D+Chandigarh" style="color: #667eea; text-decoration: underline;">SCO-212 Sector 24D Chandigarh</a><br>
+              <a href="https://maps.app.goo.gl/4h3PjhtJYke4EaN46" style="color: #667eea; text-decoration: underline;">SCO-144 Sector 24D Chandigarh</a><br>
               <strong>Contact:</strong> 7696954686
             </p>
           </div>
@@ -795,7 +795,7 @@ const sendCrashCourseEmail = async (enrollment, pdfLinks, paymentId) => {
             <h3 style="color: #111827; font-size: 16px;">🏢 Visit Our Institute</h3>
             <p style="font-size: 13px; color: #475569; line-height: 1.5;">
               <strong>Elite Academy</strong><br>
-              <a href="https://maps.google.com/?q=Elite+Academy+SCO-212+Sector+24D+Chandigarh" style="color: #667eea; text-decoration: underline;">SCO-212 Sector 24D Chandigarh</a><br>
+              <a href="https://maps.app.goo.gl/4h3PjhtJYke4EaN46" style="color: #667eea; text-decoration: underline;">SCO-144 Sector 24D Chandigarh</a><br>
               <strong>Contact:</strong> 7696954686
             </p>
           </div>
@@ -874,7 +874,7 @@ async function sendWeeklyTestSeriesEnrollmentEmail({ email, fullName, mobile, ap
             <h3 style="color: #92400e; margin-top: 0;">🏢 Visit Our Institute</h3>
             <p style="color: #78350f; margin: 8px 0;">
               <strong>Elite Academy</strong><br>
-              SCO-212 Sector 24D Chandigarh<br>
+              SCO-144 Sector 24D Chandigarh<br>
               Contact: 7696954686
             </p>
             <p style="color: #78350f; margin: 8px 0;">
@@ -1063,6 +1063,308 @@ All the best for your exam preparation! 🌟
   });
 };
 
+// Sectional Test Series Enrollment Email
+async function sendSectionalTestSeriesEnrollmentEmail({ email, fullName, mobile, appPassword, amount, paymentId, mode, fatherName }) {
+  const modeInfo = mode === "online" 
+    ? {
+        title: "Online Test Series",
+        accessInfo: "You can access the test series on your mobile device using the Elite Academy app.",
+        downloadSection: `
+          <h3 style="color: #2563eb; margin-top: 24px;">📱 Download the App</h3>
+          <p style="margin: 12px 0;">Get started by downloading our app:</p>
+          <div style="margin: 20px 0;">
+            <a href="https://play.google.com/store/apps/details?id=com.johnnykhore.eliteacademy&hl=en" 
+               style="display: inline-block; background: #34d399; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-right: 10px;">
+              📱 Download on Play Store
+            </a>
+            <a href="https://apps.apple.com/in/app/elite-academy-mock-tests/id6746954938" 
+               style="display: inline-block; background: #60a5fa; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+              📱 Download on App Store
+            </a>
+          </div>
+        `,
+        instructionsIcon: "📱",
+        instructionsText: "Login to the app using your credentials and start taking tests from anywhere!"
+      }
+    : {
+        title: "Offline Test Series",
+        accessInfo: "You can give tests at our institute. Please visit the institute with your enrollment details.",
+        downloadSection: `
+          <div style="background: #fef3c7; padding: 16px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+            <h3 style="color: #92400e; margin-top: 0;">🏢 Visit Our Institute</h3>
+            <p style="color: #78350f; margin: 8px 0;">
+              <strong>Elite Academy</strong><br>
+              SCO-212 Sector 24D Chandigarh<br>
+              Contact: 7696954686
+            </p>
+            <p style="color: #78350f; margin: 8px 0;">
+              <strong>Timing:</strong> Monday to Saturday, 9:00 AM - 6:00 PM
+            </p>
+          </div>
+        `,
+        instructionsIcon: "🏢",
+        instructionsText: "Visit the institute and login at the test center using your credentials."
+      };
+
+  const subject = `🎉 Enrollment Confirmed - Sectional Test Series (${modeInfo.title})`;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 40px 20px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 28px;">✅ Enrollment Confirmed!</h1>
+          <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">Welcome to Sectional Test Series</p>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding: 40px 30px;">
+          
+          <p style="font-size: 16px; color: #374151; line-height: 1.6;">
+            Dear <strong>${fullName}</strong>,
+          </p>
+
+          <p style="font-size: 16px; color: #374151; line-height: 1.6;">
+            Congratulations! 🎉 Your payment has been confirmed and you're now enrolled in the <strong>${modeInfo.title}</strong>.
+          </p>
+
+          <!-- Login Credentials Box -->
+          <div style="background: linear-gradient(135deg, #6366f115 0%, #8b5cf615 100%); border-radius: 12px; padding: 24px; margin: 24px 0; border: 2px solid #6366f1;">
+            <h2 style="color: #6366f1; margin-top: 0; font-size: 20px;">🔐 Your Login Credentials</h2>
+            
+            <div style="background: white; padding: 16px; border-radius: 8px; margin: 12px 0;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Email:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Password:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500; font-family: monospace; background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${appPassword}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #6b7280; font-weight: 600;">Mobile:</td>
+                  <td style="padding: 8px 0; color: #111827; font-weight: 500;">${mobile}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 16px;">
+              <p style="margin: 0; color: #92400e; font-size: 14px;">
+                ⚠️ <strong>Important:</strong> Please keep these credentials safe. You'll need them to access your tests.
+              </p>
+            </div>
+          </div>
+
+          <!-- Test Schedule Info -->
+          <div style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 6px; margin: 24px 0;">
+            <h3 style="color: #1e40af; margin-top: 0; font-size: 18px;">📅 Test Schedule</h3>
+            <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+              <p style="margin: 0; color: #c2410c; font-weight: 600; font-size: 14px;">⏱️ Duration: 3 Months • Starting from 7th March 2026</p>
+            </div>
+            <ul style="color: #1e40af; line-height: 1.8; margin: 8px 0; padding-left: 20px;">
+              <li><strong>Monday - Thursday:</strong> Subject-wise Sectional Tests</li>
+              <li><strong>Friday:</strong> Full-Length Mock Tests</li>
+            </ul>
+            <p style="color: #1e40af; margin: 12px 0; font-size: 14px;">
+              Complete coverage of all Punjab Government Exams with detailed performance analytics!
+            </p>
+          </div>
+
+          <!-- Mode Specific Instructions -->
+          <div style="margin: 24px 0;">
+            <h3 style="color: #111827; font-size: 18px;">${modeInfo.instructionsIcon} How to Access</h3>
+            <p style="color: #374151; line-height: 1.6; margin: 12px 0;">
+              ${modeInfo.accessInfo}
+            </p>
+            ${modeInfo.downloadSection}
+            <p style="color: #374151; line-height: 1.6; margin: 12px 0;">
+              ${modeInfo.instructionsText}
+            </p>
+          </div>
+
+          <!-- Enrollment Details -->
+          <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 24px 0;">
+            <h3 style="color: #111827; margin-top: 0; font-size: 18px;">📋 Enrollment Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Student Name</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${fullName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Father's Name</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${fatherName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Mode</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-weight: 500;">${modeInfo.title}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Duration</td>
+                <td style="padding: 12px 0; color: #c2410c; text-align: right; font-weight: 600;">3 Months (Starting 7th March 2026)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; color: #6b7280;">Amount Paid</td>
+                <td style="padding: 12px 0; color: #059669; text-align: right; font-weight: 600;">₹${amount}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; color: #6b7280;">Payment ID</td>
+                <td style="padding: 12px 0; color: #111827; text-align: right; font-size: 12px; font-family: monospace;">${paymentId}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Support Section -->
+          <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin: 24px 0;">
+            <h3 style="color: #1e40af; margin-top: 0; font-size: 16px;">💬 Need Help?</h3>
+            <p style="color: #1e40af; margin: 8px 0; line-height: 1.6;">
+              If you face any issues logging in or have questions, feel free to reach out to us:
+            </p>
+            <p style="color: #1e40af; margin: 8px 0;">
+              📧 Email: <a href="mailto:2025eliteacademy@gmail.com" style="color: #2563eb;">2025eliteacademy@gmail.com</a><br>
+              📱 WhatsApp/Call: 7696954686
+            </p>
+            <p style="color: #1e40af; margin: 12px 0 0 0; font-size: 13px;">
+              ⏰ Your login details will be delivered within 5 minutes. If you don't receive them, please contact us immediately.
+            </p>
+          </div>
+
+          <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-top: 24px;">
+            Best regards,<br>
+            <strong>Elite Academy Team</strong>
+          </p>
+
+          <p style="font-size: 14px; color: #6b7280; margin-top: 24px;">
+            🌟 All the best for your exam preparation! We're here to help you succeed.
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
+            © 2026 Elite Academy. All rights reserved.
+          </p>
+          <p style="color: #6b7280; font-size: 12px; margin: 5px 0;">
+            This is an automated email. Please do not reply directly to this message.
+          </p>
+        </div>
+
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+Enrollment Confirmed - Sectional Test Series (${modeInfo.title})
+
+Dear ${fullName},
+
+Congratulations! Your payment has been confirmed and you're now enrolled in the ${modeInfo.title}.
+
+🔐 Your Login Credentials:
+Email: ${email}
+Password: ${appPassword}
+Mobile: ${mobile}
+
+📅 Test Schedule:
+⏱️ Duration: 3 Months • Starting from 7th March 2026
+- Monday - Thursday: Subject-wise Sectional Tests
+- Friday: Full-Length Mock Tests
+
+${mode === "online" 
+  ? "Access: You can access the test series on your mobile device using the Elite Academy app. Download from Play Store or App Store and login with your credentials."
+  : "Access: Visit our institute to give tests. Please bring your enrollment details.\n\nInstitute Address: Elite Academy, SCO-144 Sector 24D Chandigarh\nTiming: Monday to Saturday, 9:00 AM - 6:00 PM\nContact: 7696954686"
+}
+
+📋 Enrollment Details:
+- Student Name: ${fullName}
+- Father's Name: ${fatherName}
+- Mode: ${modeInfo.title}
+- Duration: 3 Months (Starting 7th March 2026)
+- Amount Paid: ₹${amount}
+- Payment ID: ${paymentId}
+
+Need Help?
+Email: 2025eliteacademy@gmail.com
+WhatsApp/Call: 7696954686
+
+⏰ Your login details will be delivered within 5 minutes. If you don't receive them, please contact us immediately.
+
+Best regards,
+Elite Academy Team
+
+All the best for your exam preparation! 🌟
+  `;
+
+  // Send email to user
+  await sendEmail({ 
+    to: email, 
+    subject: subject, 
+    text: text, 
+    html: html 
+  });
+
+  // Send email to admin
+  try {
+    const admin = await User.findOne({ role: "admin" });
+    if (admin && admin.email) {
+      const adminHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #6366f1; padding: 20px; border-radius: 8px 8px 0 0;">
+            <h2 style="color: white; margin: 0;">🎯 New Sectional Test Series Enrollment!</h2>
+          </div>
+          
+          <div style="background: #f9fafb; padding: 20px; border-radius: 0 0 8px 8px;">
+            <p style="color: #374151; font-size: 15px;">You have a new enrollment for the Sectional Test Series.</p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb;">
+              <h3 style="color: #6366f1; margin-top: 0;">Student Information</h3>
+              <p style="margin: 8px 0;"><strong>Name:</strong> ${fullName}</p>
+              <p style="margin: 8px 0;"><strong>Father's Name:</strong> ${fatherName}</p>
+              <p style="margin: 8px 0;"><strong>Email:</strong> ${email}</p>
+              <p style="margin: 8px 0;"><strong>Mobile:</strong> ${mobile}</p>
+              <p style="margin: 8px 0;"><strong>Password:</strong> ${appPassword}</p>
+              <p style="margin: 8px 0;"><strong>Mode:</strong> ${modeInfo.title}</p>
+              <p style="margin: 8px 0;"><strong>Amount:</strong> ₹${amount}</p>
+              <p style="margin: 8px 0;"><strong>Payment ID:</strong> ${paymentId}</p>
+              <p style="margin: 8px 0;"><strong>Enrollment Date:</strong> ${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+
+            <p style="color: #6b7280; margin-top: 20px;">
+              Best regards,<br>
+              <strong>Elite Meet System</strong>
+            </p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await sendEmail({
+        to: admin.email,
+        subject: `🎯 New Sectional Test Series Enrollment - ${fullName} (${mode})`,
+        html: adminHtml
+      });
+    }
+  } catch (adminEmailError) {
+    console.error("Error sending admin notification email:", adminEmailError);
+    // Don't throw - user email already sent successfully
+  }
+
+  console.log(`✅ Sectional Test Series enrollment emails sent to ${email} and admin`);
+};
+
 const sendPstetEmail = async (enrollment, paymentId) => {
   try {
     const admin = await User.findOne({ role: "admin" });
@@ -1219,7 +1521,7 @@ const sendPstetEmail = async (enrollment, paymentId) => {
 //             <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📅 Session Details:</h3>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Time:</strong> 10am - 11am</p>
-//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 1st March(Sunday) 2026</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 8th March(Sunday) 2026</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Platform:</strong> Google Meet</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>What You'll Get:</strong> Complete Strategy to Crack Exam</p>
 //             <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;"> Google Meet link will be shared in WhatsApp community!</p>
@@ -1283,7 +1585,7 @@ const sendPstetEmail = async (enrollment, paymentId) => {
 //           <p><strong>Student Email:</strong> ${enrollment.email}</p>
 //           <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
 //           <p><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-//           <p><strong>Date:</strong> 1st March(Sunday) 2026</p>
+//           <p><strong>Date:</strong> 8th March(Sunday) 2026</p>
 //           <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
 //           <p><strong>Meet Link Provided:</strong> ${googleMeetLink}</p>
 //           <p><strong>Payment ID:</strong> ${paymentId}</p>
@@ -1442,7 +1744,7 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
           <div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
             <h4 style="color: #9a3412; margin: 0 0 10px 0; font-size: 16px;">📅 Session Details</h4>
             <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
-            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Date:</strong> 1st March 2026 (Sunday)</p>
+            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Date:</strong> 8th March 2026 (Sunday)</p>
             <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Agenda:</strong> Complete Strategy to Crack Exam</p>
           </div>
 
@@ -1690,6 +1992,7 @@ module.exports = {
   sendCoachingEmail,
   sendCrashCourseEmail,   // NEW - for crash course
   sendWeeklyTestSeriesEnrollmentEmail,
+  sendSectionalTestSeriesEnrollmentEmail,
   sendPstetEmail,
   sendExciseInspectorEmail,
   sendJobApplicationEmail,
