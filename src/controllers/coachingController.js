@@ -1,6 +1,7 @@
 const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCoachingEnrollment = require("../models/CrashCourse");
 const weeklytestSeries = require("../models/WeeklyTestSeries");
+const sectionalTestSeries = require("../models/SectionalTestSeries");
 const User = require("../models/User");
 const Razorpay = require("razorpay");
 const bcrypt = require("bcrypt");
@@ -738,6 +739,97 @@ exports.checkWeeklyAccess = async (req, res) => {
       hasAccess: false,
       message: "Error checking access", 
       error: error.message 
+    });
+  }
+};
+
+exports.checkSectionalTestAccess = async (req, res) => {
+  try {
+    console.log("API hit of the checkSectionalTestAccess")
+    const { email } = req.query;
+
+    // Validate email parameter
+    if (!email) {
+      return res.status(400).json({ 
+        hasAccess: false, 
+        message: "Email parameter is required" 
+      });
+    }
+    console.log("Checking access for email:", email);
+    // Find enrollment with confirmed status for the given email
+    const confirmedEnrollment = await sectionalTestSeries.findOne({
+      email: email,
+      status: "confirmed"
+    });
+
+    // Return access status
+    if (confirmedEnrollment) {
+      console.log("✅ Confirmed enrollment found for email:", email);
+      return res.status(200).json({ 
+        hasAccess: true,
+        message: "Access granted"
+      });
+    } else {
+      console.log("❌ No confirmed enrollment found for email:", email);
+      return res.status(200).json({ 
+        hasAccess: false,
+        message: "No confirmed enrollment found"
+      });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ 
+      hasAccess: false,
+      message: "Error checking access", 
+      error: error.message 
+    });
+  }
+};
+
+exports.adminsectionalTestAddEnrollment = async (req, res) => {
+  try {
+    console.log("Request from Admin to add Sectional Test Series enrollment", req.body);
+    const { email, fullName, mobile, appPassword, status } = req.body;
+
+    if (!email || !fullName || !mobile || !appPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, fullName, mobile, and appPassword are required.",
+      });
+    }
+
+    // Check if enrollment already exists
+    let existingEnrollment = await sectionalTestSeries.findOne({ email });
+    if (existingEnrollment) {
+      return res.status(400).json({
+        success: false,
+        message: "User already enrolled in Sectional Test Series.",
+      });
+    }
+
+    // Create new enrollment
+    const newEnrollment = new sectionalTestSeries({
+      email,
+      fullName,
+      mobile,
+      appPassword,
+      status: status || "confirmed", // Default to confirmed for admin additions
+    });
+
+    await newEnrollment.save();
+    console.log("Sectional Test Series enrollment added:", newEnrollment);
+
+    return res.status(201).json({
+      success: true,
+      message: "Sectional Test Series enrollment added successfully.",
+      data: newEnrollment,
+    });
+  } catch (error) {
+    console.error("Error adding Sectional Test Series enrollment:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error adding enrollment",
+      error: error.message,
     });
   }
 };

@@ -1234,6 +1234,9 @@ async function sendSectionalTestSeriesEnrollmentEmail({ email, fullName, mobile,
             <p style="color: #1e40af; margin: 12px 0 0 0; font-size: 13px;">
               ⏰ Your login details will be delivered within 5 minutes. If you don't receive them, please contact us immediately.
             </p>
+            <p style="color: #1e40af; margin: 12px 0 0 0;">
+              🎓 <strong>Join our WhatsApp Community:</strong> <a href="https://chat.whatsapp.com/BTxcDSBPHMg22ji2loxYsX" style="color: #2563eb; text-decoration: underline;">Click here to join</a> for updates, tips, and community support!
+            </p>
           </div>
 
           <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-top: 24px;">
@@ -1296,6 +1299,9 @@ Email: 2025eliteacademy@gmail.com
 WhatsApp/Call: 7696954686
 
 ⏰ Your login details will be delivered within 5 minutes. If you don't receive them, please contact us immediately.
+
+🎓 Join our WhatsApp Community: https://chat.whatsapp.com/BTxcDSBPHMg22ji2loxYsX
+Stay connected for updates, tips, and community support!
 
 Best regards,
 Elite Academy Team
