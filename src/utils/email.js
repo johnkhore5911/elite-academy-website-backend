@@ -1527,7 +1527,7 @@ const sendPstetEmail = async (enrollment, paymentId) => {
 //             <h3 style="color: #92400e; margin-top: 0; font-size: 18px;">📅 Session Details:</h3>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Time:</strong> 10am - 11am</p>
-//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 8th March(Sunday) 2026</p>
+//             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Date:</strong> 15th March(Sunday) 2026</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>Platform:</strong> Google Meet</p>
 //             <p style="color: #1f2937; margin: 8px 0; font-size: 15px;"><strong>What You'll Get:</strong> Complete Strategy to Crack Exam</p>
 //             <p style="color: #059669; margin: 15px 0 0 0; font-size: 16px; font-weight: bold;"> Google Meet link will be shared in WhatsApp community!</p>
@@ -1591,7 +1591,7 @@ const sendPstetEmail = async (enrollment, paymentId) => {
 //           <p><strong>Student Email:</strong> ${enrollment.email}</p>
 //           <p><strong>Mobile:</strong> ${enrollment.mobile}</p>
 //           <p><strong>Session:</strong> Excise Inspector Exam Strategy Session</p>
-//           <p><strong>Date:</strong> 8th March(Sunday) 2026</p>
+//           <p><strong>Date:</strong> 15th March(Sunday) 2026</p>
 //           <p><strong>Amount:</strong> ₹${enrollment.amount}</p>
 //           <p><strong>Meet Link Provided:</strong> ${googleMeetLink}</p>
 //           <p><strong>Payment ID:</strong> ${paymentId}</p>
@@ -1750,7 +1750,7 @@ const sendExciseInspectorEmail = async (enrollment, paymentId) => {
           <div style="background: #fff7ed; border-left: 4px solid #f97316; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
             <h4 style="color: #9a3412; margin: 0 0 10px 0; font-size: 16px;">📅 Session Details</h4>
             <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Time:</strong> 10:00 AM - 11:00 AM</p>
-            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Date:</strong> 8th March 2026 (Sunday)</p>
+            <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Date:</strong> 15th March 2026 (Sunday)</p>
             <p style="margin: 4px 0; font-size: 14px; color: #4b5563;"><strong>Agenda:</strong> Complete Strategy to Crack Exam</p>
           </div>
 
