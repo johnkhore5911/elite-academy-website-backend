@@ -45,7 +45,7 @@ exports.getInfo_Offline = async (req, res) => {
         "Solution PDFs for every test"
       ],
       contact: "7696954686",
-      address: "Elite Academy, SCO-212 Sector 24D Chandigarh"
+      address: "Elite Academy, SCO-144 Sector 24D Chandigarh"
     }
   });
 };

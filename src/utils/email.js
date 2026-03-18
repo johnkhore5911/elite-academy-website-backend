@@ -944,7 +944,7 @@ async function sendSectionalTestSeriesEnrollmentEmail({ email, fullName, mobile,
             <h3 style="color: #92400e; margin-top: 0;">🏢 Visit Our Institute</h3>
             <p style="color: #78350f; margin: 8px 0;">
               <strong>Elite Academy</strong><br>
-              SCO-212 Sector 24D Chandigarh<br>
+              SCO-144 Sector 24D Chandigarh<br>
               Contact: 7696954686
             </p>
             <p style="color: #78350f; margin: 8px 0;">
