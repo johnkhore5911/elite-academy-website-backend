@@ -9,8 +9,8 @@ const razorpay = new Razorpay({
 exports.getInfo = async (req, res) => {
   res.json({
     package: {
-      name: "⏰ 5 Months Online Crash Course Program starting from 1st Feb",
-      price: process.env.CrashCourse_PRICE || 4999,
+      name: "⏰ Online Crash Course Program",
+      price: process.env.CrashCourse_PRICE || 5999,
       originalPrice: 12999,
       description: "Prepare smart with live + recorded classes and 23,000+ PYQs."
     }
@@ -21,7 +21,7 @@ exports.enrollAndCreateOrder = async (req, res) => {
   try {
     console.log("API hit of enrollAndCreateOrder!!!!!")
     const { fullName, fatherName, mobile, password, email } = req.body;
-    const amount = process.env.CrashCourse_PRICE || 4999;
+    const amount = process.env.CrashCourse_PRICE || 5999;
 
     // 1. Create Razorpay Order
     const options = {

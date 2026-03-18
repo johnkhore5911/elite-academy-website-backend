@@ -23,7 +23,7 @@
 - `EMAIL_PASS` - SMTP password
 
 ### Course Prices
-- `COACHING_PRICE` - Price for regular coaching course (default: 4999)
+- `COACHING_PRICE` - Price for regular coaching course (default: 5999)
 - `PSTET_PRICE` - Price for PSTET & CTET 1 Month Crash Course (default: 2999)
 - `CRASH_COURSE_PRICE` - Price for crash course
 - `WEEKLY_TEST_SERIES_PRICE` - Price for weekly test series

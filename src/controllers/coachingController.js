@@ -27,8 +27,8 @@ const razorpay = new Razorpay({
 exports.getInfo = async (req, res) => {
   res.json({
     package: {
-      name: "⏰ 5 Months Complete Online Coaching Program starting from 1st Feb",
-      price: process.env.COACHING_PRICE || 4999,
+      name: "⏰ Complete Online Coaching Program with Tracker App",
+      price: process.env.COACHING_PRICE || 5999,
       originalPrice: 12999,
       description: "Prepare smart with live + recorded classes and 23,000+ PYQs."
     }
@@ -38,7 +38,7 @@ exports.getInfo = async (req, res) => {
 exports.enrollAndCreateOrder = async (req, res) => {
   try {
     const { fullName, fatherName, mobile, password, email } = req.body;
-    const amount = process.env.COACHING_PRICE || 4999;
+    const amount = process.env.COACHING_PRICE || 5999;
 
     // 1. Create Razorpay Order
     const options = {
@@ -240,7 +240,7 @@ exports.adminAddEnrollment = async (req, res) => {
       fatherName,
       mobile,
       appPassword: password,
-      amount: amount || process.env.COACHING_PRICE || 4999,
+      amount: amount || process.env.COACHING_PRICE || 5999,
       razorpayOrderId: `admin_${Date.now()}_${user._id}`, // Generate unique dummy order ID
       status: "confirmed",
       enrollmentMode: "admin",
@@ -381,7 +381,7 @@ exports.admincrashAddEnrollment = async (req, res) => {
       fatherName,
       mobile,
       appPassword: password,
-      amount: amount || process.env.COACHING_PRICE || 4999,
+      amount: amount || process.env.COACHING_PRICE || 5999,
       razorpayOrderId: `admin_${Date.now()}_${user._id}`, // Generate unique dummy order ID
       status: "confirmed",
       enrollmentMode: "admin",
@@ -520,7 +520,7 @@ exports.admincrashAddEnrollment = async (req, res) => {
 //       fatherName,
 //       mobile,
 //       appPassword: password,
-//       amount: amount || process.env.COACHING_PRICE || 4999,
+//       amount: amount || process.env.COACHING_PRICE || 5999,
 //       razorpayOrderId: `admin_${Date.now()}_${user._id}`, // Generate unique dummy order ID
 //       status: "confirmed",
 //       enrollmentMode: "admin",
