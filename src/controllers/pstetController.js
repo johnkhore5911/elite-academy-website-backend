@@ -24,19 +24,28 @@ exports.enrollAndCreateOrder = async (req, res) => {
     const { fullName, fatherName, mobile, email } = req.body;
     const amount = process.env.PSTET_PRICE || 2999;
 
-    // 1. Create Razorpay Order
+    // Determine user association (support unauthenticated requests)
+    let userFirebaseUid = null;
+    if (req.user && req.user.id) {
+      userFirebaseUid = req.user.id;
+    } else if (email) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) userFirebaseUid = existingUser._id.toString();
+    }
+
+    // 1. Create Razorpay Order (include userFirebaseUid in notes)
     const options = {
       amount: amount * 100, // in paise
       currency: "INR",
       receipt: `rcpt_${Date.now()}`,
-      notes: { purchaseType: "pstet_ctet", userEmail: email }
+      notes: { purchaseType: "pstet_ctet", userEmail: email, userFirebaseUid }
     };
 
     const order = await razorpay.orders.create(options);
 
     // 2. Save Enrollment Data (Pending)
     const newEnrollment = new PstetEnrollment({
-      userFirebaseUid: req.user.id,
+      userFirebaseUid,
       fullName,
       email,
       fatherName,

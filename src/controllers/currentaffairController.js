@@ -68,15 +68,23 @@ const getPDFInfo = async (req, res, next) => {
  */
 const createPurchase = async (req, res, next) => {
   try {
-    const { user } = req; // From auth middleware
+    const { user } = req; // Optional if authenticated
+    const { userName: bodyUserName, fullName, userEmail: bodyUserEmail, email } = req.body || {};
+    const finalEmail = user?.email || bodyUserEmail || email;
+    const finalUserName = user?.name || user?.displayName || bodyUserName || fullName;
+    const finalFirebaseUid = user?.id || (finalEmail ? String(finalEmail).toLowerCase() : null);
+
+    if (!finalEmail || !finalUserName) {
+      return res.status(400).json({ error: "Name and email are required to continue" });
+    }
 
     // Get or create user in MongoDB (auto-sync if doesn't exist)
     const userDoc = await User.findOneAndUpdate(
-      { firebaseUid: user.id },
+      { firebaseUid: finalFirebaseUid },
       {
-        firebaseUid: user.id,
-        email: user.email,
-        name: user.name || user.email?.split('@')[0] || 'User',
+        firebaseUid: finalFirebaseUid,
+        email: finalEmail,
+        name: finalUserName || finalEmail?.split('@')[0] || 'User',
         role: 'user',
       },
       {
@@ -96,7 +104,7 @@ const createPurchase = async (req, res, next) => {
 
     // Create Razorpay order
     const timestamp = Date.now().toString().slice(-10);
-    const userIdShort = user.id.substring(0, 8);
+    const userIdShort = String(finalFirebaseUid).substring(0, 8);
     const receipt = `pdf_${timestamp}_${userIdShort}`;
     
     const pdfPrice = getPDFPrice();
@@ -107,9 +115,9 @@ const createPurchase = async (req, res, next) => {
       receipt: receipt,
       notes: {
         type: "currentaffair_purchase",
-        userFirebaseUid: user.id,
-        userName: user.name || userDoc.name,
-        userEmail: user.email || userDoc.email,
+        userFirebaseUid: finalFirebaseUid,
+        userName: finalUserName || userDoc.name,
+        userEmail: finalEmail || userDoc.email,
       },
     };
 

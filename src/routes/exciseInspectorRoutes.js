@@ -8,6 +8,6 @@ const router = express.Router();
 router.get("/info", getInfo);
 
 // Enroll and create order (protected)
-router.post("/enroll", auth, enrollAndCreateOrder);
+router.post("/enroll", enrollAndCreateOrder);
 
 module.exports = router;

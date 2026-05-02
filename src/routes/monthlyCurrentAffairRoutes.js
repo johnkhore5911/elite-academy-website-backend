@@ -16,9 +16,9 @@ const router = express.Router();
 router.get('/', getAllMagazines);
 router.get('/:month', getMagazineInfo);
 
-// User routes - authentication required
-router.post('/purchase/complete-pack', auth, createCompletePackPurchase);
-router.post('/purchase/:month', auth, createMagazinePurchase);
+// User routes - public purchase flow, auth only for account-specific access endpoints
+router.post('/purchase/complete-pack', createCompletePackPurchase);
+router.post('/purchase/:month', createMagazinePurchase);
 router.get('/my/purchases', auth, getMyPurchases);
 router.get('/access/:month', auth, checkMagazineAccess);
 router.get('/download/:month', auth, getMagazineDriveLink);

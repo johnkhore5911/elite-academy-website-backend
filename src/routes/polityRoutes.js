@@ -6,8 +6,8 @@ const { getPolityInfo, createPurchase, getMyPurchases } = require("../controller
 // Public route
 router.get("/info", getPolityInfo);
 
-// Protected routes
-router.post("/create-purchase", auth, createPurchase);
+// Purchase route - allow guest checkout with name/email
+router.post("/create-purchase", createPurchase);
 router.get("/my-purchases", auth, getMyPurchases);
 
 module.exports = router;

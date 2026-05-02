@@ -5,6 +5,6 @@ const { getInfo, enrollAndCreateOrder } = require("../controllers/crashcourseCon
 
 router.get("/info", getInfo);
 // We combine enrollment and purchase into one call for a better UX
-router.post("/enroll", auth, enrollAndCreateOrder);
+router.post("/enroll", enrollAndCreateOrder);
 
 module.exports = router;

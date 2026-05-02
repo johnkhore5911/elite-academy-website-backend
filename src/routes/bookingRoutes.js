@@ -4,9 +4,9 @@ const auth = require("../middleware/auth");
 const { createBooking, verifyPayment, cancelPayment } = require("../controllers/bookingController");
 const { fixConfirmedBookings } = require("../utils/fixConfirmedBookings");
 
-router.post("/", auth, createBooking);
-router.post("/verify-payment", auth, verifyPayment);
-router.post("/cancel-payment", auth, cancelPayment);
+router.post("/", createBooking);
+router.post("/verify-payment", verifyPayment);
+router.post("/cancel-payment", cancelPayment);
 
 // Admin only - Fix confirmed bookings with incorrect slot status
 router.post("/fix-confirmed", auth, async (req, res, next) => {

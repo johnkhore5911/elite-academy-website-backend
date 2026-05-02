@@ -7,7 +7,7 @@ const router = express.Router();
 // Get PSTET course info
 router.get("/info", getInfo);
 
-// Enroll and create order (protected)
-router.post("/enroll", auth, enrollAndCreateOrder);
+// Enroll and create order (public)
+router.post("/enroll", enrollAndCreateOrder);
 
 module.exports = router;

@@ -14,8 +14,15 @@ const { sendBookingEmails } = require("../utils/email");
  */
 const createBooking = async (req, res, next) => {
   try {
-    const { slotId, userName, userEmail, purpose } = req.body;
-    const userFirebaseUid = req.user.id; // Firebase UID from auth middleware
+    const { slotId, userName, fullName, userEmail, email, purpose } = req.body;
+    // Accept both userEmail and email field names
+    const finalEmail = userEmail || email;
+    const finalUserName = userName || fullName;
+    const userFirebaseUid = req.user?.id || (finalEmail ? finalEmail.toLowerCase() : null);
+
+    if (!userFirebaseUid || !finalEmail || !finalUserName) {
+      return res.status(400).json({ error: 'Name and email are required to continue' });
+    }
 
     // 1. ATOMIC UPDATE: Check and lock slot in ONE operation
     const slot = await Slot.findOneAndUpdate(
@@ -50,7 +57,7 @@ const createBooking = async (req, res, next) => {
         notes: {
           slotId: slot._id.toString(),
           userFirebaseUid,
-          userEmail,
+          userEmail: finalEmail,
         },
       });
 
@@ -59,8 +66,8 @@ const createBooking = async (req, res, next) => {
         userFirebaseUid,
         slotId,
         adminFirebaseUid: slot.adminFirebaseUid,
-        userName,
-        userEmail,
+        userName: finalUserName,
+        userEmail: finalEmail,
         purpose: purpose || '',
         amount: slot.price,
         razorpayOrderId: razorpayOrder.id,
@@ -70,6 +77,7 @@ const createBooking = async (req, res, next) => {
 
       res.status(201).json({
         booking,
+        order: razorpayOrder,
         razorpayOrderId: razorpayOrder.id,
         razorpayKeyId: process.env.RAZORPAY_KEY_ID,
         amount: slot.price,

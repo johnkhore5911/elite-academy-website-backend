@@ -13,8 +13,8 @@ const {
 // Get typing course info (public)
 router.get("/info", getTypingInfo);
 
-// Create typing purchase (protected)
-router.post("/create-purchase", auth, createTypingPurchase);
+// Create typing purchase - allow guest checkout
+router.post("/create-purchase", createTypingPurchase);
 
 // Get my typing purchases (protected)
 router.get("/my-purchases", auth, getMyTypingPurchases);

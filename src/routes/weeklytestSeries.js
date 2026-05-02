@@ -5,7 +5,7 @@ const { getInfo_Online,getInfo_Offline, enrollAndCreateOrderOnline,enrollAndCrea
 
 router.get("/info-online", getInfo_Online);
 router.get("/info-offline", getInfo_Offline);
-router.post("/enroll-online", auth, enrollAndCreateOrderOnline);
-router.post("/enroll-offline", auth, enrollAndCreateOrderOffline);
+router.post("/enroll-online", enrollAndCreateOrderOnline);
+router.post("/enroll-offline", enrollAndCreateOrderOffline);
 
 module.exports = router;

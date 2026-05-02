@@ -1,4 +1,5 @@
 const SectionalTestSeries = require("../models/SectionalTestSeries");
+const User = require("../models/User");
 const Razorpay = require("razorpay");
 
 const razorpay = new Razorpay({
@@ -28,7 +29,7 @@ exports.getInfo_Online = async (req, res) => {
   });
 };
 
-exports.getInfo_Offline = async (req, res) => {
+exports.getInfo_Offline = async (req, res) => {            
   res.json({
     package: {
       name: "📝 Sectional Test Series - Offline Mode",
@@ -56,19 +57,28 @@ exports.enrollAndCreateOrderOnline = async (req, res) => {
     const { fullName, fatherName, mobile, password, email } = req.body;
     const amount = process.env.SECTIONAL_TEST_PRICE_ONLINE || 3000;
 
-    // 1. Create Razorpay Order
+    // Determine user association (support unauthenticated requests)
+    let userFirebaseUid = null;
+    if (req.user && req.user.id) {
+      userFirebaseUid = req.user.id;
+    } else if (email) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) userFirebaseUid = existingUser._id.toString();
+    }
+
+    // 1. Create Razorpay Order (include userFirebaseUid in notes)
     const options = {
       amount: amount * 100, // in paise
       currency: "INR",
       receipt: `rcpt_sectional_${Date.now()}`,
-      notes: { purchaseType: "sectional-testseries-online", userEmail: email }
+      notes: { purchaseType: "sectional-testseries-online", userEmail: email, userFirebaseUid }
     };
 
     const order = await razorpay.orders.create(options);
 
     // 2. Save Enrollment Data (Pending)
     const newEnrollment = new SectionalTestSeries({
-      userFirebaseUid: req.user.id,
+      userFirebaseUid,
       fullName,
       email,
       fatherName,
@@ -98,19 +108,28 @@ exports.enrollAndCreateOrderOffline = async (req, res) => {
     const { fullName, fatherName, mobile, password, email } = req.body;
     const amount = process.env.SECTIONAL_TEST_PRICE_OFFLINE || 3000;
 
-    // 1. Create Razorpay Order
+    // Determine user association (support unauthenticated requests)
+    let userFirebaseUid = null;
+    if (req.user && req.user.id) {
+      userFirebaseUid = req.user.id;
+    } else if (email) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) userFirebaseUid = existingUser._id.toString();
+    }
+
+    // 1. Create Razorpay Order (include userFirebaseUid in notes)
     const options = {
       amount: amount * 100, // in paise
       currency: "INR",
       receipt: `rcpt_sectional_${Date.now()}`,
-      notes: { purchaseType: "sectional-testseries-offline", userEmail: email }
+      notes: { purchaseType: "sectional-testseries-offline", userEmail: email, userFirebaseUid }
     };
 
     const order = await razorpay.orders.create(options);
 
     // 2. Save Enrollment Data (Pending)
     const newEnrollment = new SectionalTestSeries({
-      userFirebaseUid: req.user.id,
+      userFirebaseUid,
       fullName,
       email,
       fatherName,

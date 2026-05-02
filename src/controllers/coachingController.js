@@ -25,6 +25,8 @@ const razorpay = new Razorpay({
 });
 
 exports.getInfo = async (req, res) => {
+  console.log("Coaching info requested");
+  console.log("Current coaching price from env:", process.env.COACHING_PRICE);
   res.json({
     package: {
       name: "⏰ Complete Online Coaching Program with Tracker App",

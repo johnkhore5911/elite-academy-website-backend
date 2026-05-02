@@ -13,7 +13,7 @@ router.get("/info/online", getInfo_Online);
 router.get("/info/offline", getInfo_Offline);
 
 // Protected routes - Create enrollment and order
-router.post("/enroll/online", auth, enrollAndCreateOrderOnline);
-router.post("/enroll/offline", auth, enrollAndCreateOrderOffline);
+router.post("/enroll/online",  enrollAndCreateOrderOnline);
+router.post("/enroll/offline", enrollAndCreateOrderOffline);
 
 module.exports = router;

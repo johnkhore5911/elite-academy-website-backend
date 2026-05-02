@@ -6,8 +6,8 @@ const { getPDFInfo, createPurchase, getMyPurchases } = require("../controllers/c
 // Public route
 router.get("/info", getPDFInfo);
 
-// Protected routes
-router.post("/create-purchase", auth, createPurchase);
+// Purchase route - allow guest checkout
+router.post("/create-purchase", createPurchase);
 router.get("/my-purchases", auth, getMyPurchases);
 
 module.exports = router;

@@ -3,6 +3,8 @@ const cors = require("cors");
 const connectDB = require("./src/config/db");
 const { cloudinaryConnect } = require("./src/config/cloudinary");
 require("dotenv").config();
+const dns = require("dns");
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const app = express();
 

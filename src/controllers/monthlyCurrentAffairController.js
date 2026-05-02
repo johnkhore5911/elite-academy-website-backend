@@ -49,9 +49,14 @@ exports.getMagazineInfo = async (req, res) => {
 exports.createMagazinePurchase = async (req, res) => {
   try {
     const { month } = req.params;
-    const userId = req.user.id;
-    const userEmail = req.user.email;
-    const userName = req.user.name || req.user.displayName;
+    const { email, name } = req.body;
+    const userId = req.user?.id || (email ? email.toLowerCase() : null);
+    const userEmail = req.user?.email || (email ? email.toLowerCase() : null);
+    const userName = req.user?.name || req.user?.displayName || name || '';
+
+    if (!userId || !userEmail) {
+      return res.status(400).json({ error: 'Email is required to continue' });
+    }
 
     console.log(`Creating magazine purchase: ${month} for user ${userEmail}`);
 
@@ -132,9 +137,14 @@ exports.createMagazinePurchase = async (req, res) => {
 // ✅ Create purchase for complete pack (all available magazines)
 exports.createCompletePackPurchase = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userEmail = req.user.email;
-    const userName = req.user.name || req.user.displayName;
+    const { email, name } = req.body;
+    const userId = req.user?.id || (email ? email.toLowerCase() : null);
+    const userEmail = req.user?.email || (email ? email.toLowerCase() : null);
+    const userName = req.user?.name || req.user?.displayName || name || '';
+
+    if (!userId || !userEmail) {
+      return res.status(400).json({ error: 'Email is required to continue' });
+    }
 
     console.log(`Creating complete pack purchase for user ${userEmail}`);
 

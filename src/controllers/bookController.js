@@ -306,9 +306,14 @@ exports.getPackageInfo = async (req, res) => {
 exports.createBookPurchase = async (req, res) => {
   try {
     const { bookType } = req.params;
-    const userId = req.user.id;
-    const userEmail = req.user.email;
-    const userName = req.user.name || req.user.displayName;
+    const { userName: bodyUserName, fullName, userEmail: bodyUserEmail, email } = req.body || {};
+    const userEmail = req.user?.email || bodyUserEmail || email;
+    const userName = req.user?.name || req.user?.displayName || bodyUserName || fullName;
+    const userId = req.user?.id || (userEmail ? String(userEmail).toLowerCase() : null);
+
+    if (!userEmail || !userName) {
+      return res.status(400).json({ error: 'Name and email are required to continue' });
+    }
 
     console.log(`Creating book purchase: ${bookType} for user ${userEmail}`);
     console.log('User ID:', userId);
@@ -353,7 +358,7 @@ exports.createBookPurchase = async (req, res) => {
         purchaseType: 'book',
         packageType: PackageType.SINGLE,
         bookType,
-        userId: userId.toString(),
+        userId: String(userId),
         userEmail,
         userName: userName || ''
       }
@@ -396,9 +401,14 @@ exports.createBookPurchase = async (req, res) => {
 exports.createPackagePurchase = async (req, res) => {
   try {
     const { packageType } = req.params;
-    const userId = req.user.id;
-    const userEmail = req.user.email;
-    const userName = req.user.name || req.user.displayName;
+    const { userName: bodyUserName, fullName, userEmail: bodyUserEmail, email } = req.body || {};
+    const userEmail = req.user?.email || bodyUserEmail || email;
+    const userName = req.user?.name || req.user?.displayName || bodyUserName || fullName;
+    const userId = req.user?.id || (userEmail ? String(userEmail).toLowerCase() : null);
+
+    if (!userEmail || !userName) {
+      return res.status(400).json({ error: 'Name and email are required to continue' });
+    }
 
     const packageInfo = PACKAGE_INFO[packageType];
     if (!packageInfo) {
@@ -475,7 +485,7 @@ exports.createPackagePurchase = async (req, res) => {
       notes: {
         purchaseType: 'package',
         packageType,
-        userId: userId.toString(),
+        userId: String(userId),
         userEmail,
         userName: userName || '',
         booksCount: packageInfo.books.length

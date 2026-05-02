@@ -36,8 +36,17 @@ exports.enrollAndCreateOrder = async (req, res) => {
     const order = await razorpay.orders.create(options);
 
     // 2. Save Enrollment Data (Pending)
+    // Support unauthenticated requests: prefer req.user.id, otherwise attach existing user by email if available
+    let userFirebaseUid = null;
+    if (req.user && req.user.id) {
+      userFirebaseUid = req.user.id;
+    } else if (email) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) userFirebaseUid = existingUser._id.toString();
+    }
+
     const newEnrollment = new ExciseInspectorEnrollment({
-      userFirebaseUid: req.user.id,
+      userFirebaseUid,
       fullName,
       email,
       mobile,

@@ -58,27 +58,35 @@ const getPolityInfo = async (req, res, next) => {
  */
 const createPurchase = async (req, res, next) => {
   try {
-    const { user } = req; // From auth middleware
+    const { user } = req; // Optional if authenticated
+    const { userName: bodyUserName, fullName, userEmail: bodyUserEmail, email } = req.body || {};
+    const finalEmail = user?.email || bodyUserEmail || email;
+    const finalUserName = user?.name || user?.displayName || bodyUserName || fullName;
+    const finalFirebaseUid = user?.id || (finalEmail ? String(finalEmail).toLowerCase() : null);
+
+    if (!finalEmail || !finalUserName) {
+      return res.status(400).json({ error: "Name and email are required to continue" });
+    }
 
     // Get or create user in MongoDB (auto-sync if doesn't exist)
-    let userDoc = await User.findOne({ firebaseUid: user.id });
+    let userDoc = await User.findOne({ firebaseUid: finalFirebaseUid });
     
     if (!userDoc) {
       // Check if user exists by email (might be from manual signup or different firebaseUid)
-      const existingUser = await User.findOne({ email: user.email });
+      const existingUser = await User.findOne({ email: finalEmail });
       if (existingUser) {
         // Update existing user with firebaseUid
         userDoc = await User.findOneAndUpdate(
-          { email: user.email },
-          { firebaseUid: user.id },
+          { email: finalEmail },
+          { firebaseUid: finalFirebaseUid },
           { new: true }
         );
       } else {
         // Create new user
         userDoc = await User.create({
-          firebaseUid: user.id,
-          email: user.email,
-          name: user.name || user.email?.split('@')[0] || 'User',
+          firebaseUid: finalFirebaseUid,
+          email: finalEmail,
+          name: finalUserName || finalEmail?.split('@')[0] || 'User',
           role: 'user',
           signupType: 'google',
         });
@@ -95,7 +103,7 @@ const createPurchase = async (req, res, next) => {
 
     // Create Razorpay order
     const timestamp = Date.now().toString().slice(-10);
-    const userIdShort = user.id.substring(0, 8);
+    const userIdShort = String(finalFirebaseUid).substring(0, 8);
     const receipt = `polity_${timestamp}_${userIdShort}`;
     const polityPrice = getPolityPrice();
 
@@ -105,9 +113,9 @@ const createPurchase = async (req, res, next) => {
       receipt: receipt,
       notes: {
         type: "polity_purchase",
-        userFirebaseUid: user.id,
-        userName: user.name || userDoc.name,
-        userEmail: user.email || userDoc.email,
+        userFirebaseUid: finalFirebaseUid,
+        userName: finalUserName || userDoc.name,
+        userEmail: finalEmail || userDoc.email,
       },
     };
 
