@@ -82,6 +82,7 @@ exports.checkAccess = async (req, res) => {
   try {
     console.log("API hit of the checkAccess")
     const { email } = req.query;
+    console.log("Checking access for email:", email);
 
     // Validate email parameter
     if (!email) {
@@ -96,6 +97,7 @@ exports.checkAccess = async (req, res) => {
       email: email,
       status: "confirmed"
     });
+    console.log("Found confirmed enrollment:", confirmedEnrollment);
 
     // Return access status
     if (confirmedEnrollment) {
