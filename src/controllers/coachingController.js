@@ -40,8 +40,13 @@ exports.getInfo = async (req, res) => {
 exports.enrollAndCreateOrder = async (req, res) => {
   try {
     const { fullName, fatherName, mobile, password, email } = req.body;
+    console.log("Enrollment request received for:", email);
     const amount = process.env.COACHING_PRICE || 5999;
-
+    console.log("Using coaching price:", amount);
+    // Basic validation
+    if (!fullName || !fatherName || !mobile || !password || !email) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
     // 1. Create Razorpay Order
     const options = {
       amount: amount * 100, // in paise
@@ -51,10 +56,11 @@ exports.enrollAndCreateOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-
+    console.log("Razorpay order created:", order);
     // 2. Save Enrollment Data (Pending)
+    const userFirebaseUid = (req.user && req.user.id) || req.body.userFirebaseUid || null;
     const newEnrollment = new CoachingEnrollment({
-      userFirebaseUid: req.user.id,
+      userFirebaseUid,
       fullName,
       email,
       fatherName,
@@ -65,14 +71,28 @@ exports.enrollAndCreateOrder = async (req, res) => {
       status: "pending"
     });
 
+    console.log("Saving new enrollment to DB:", newEnrollment);
     await newEnrollment.save();
 
 
 
-    res.status(201).json({
-      order,
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID
-    });
+    try {
+      const payload = {
+        order,
+        razorpayKeyId: process.env.RAZORPAY_KEY_ID
+      };
+      console.log('Sending enrollment response payload for order:', order.id);
+      res.status(201).json(payload);
+    } catch (sendErr) {
+      console.error('Error sending enrollment response:', sendErr);
+      // If sending fails, return minimal success info
+      try {
+        res.status(201).json({ orderId: order.id, razorpayKeyId: process.env.RAZORPAY_KEY_ID });
+      } catch (finalErr) {
+        console.error('Final error sending enrollment response:', finalErr);
+        res.status(500).json({ message: 'Error creating enrollment (response send failed)', error: finalErr.message });
+      }
+    }
   } catch (error) {
     res.status(500).json({ message: "Error creating enrollment", error: error.message });
   }

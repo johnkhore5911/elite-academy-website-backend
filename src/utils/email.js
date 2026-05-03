@@ -1838,6 +1838,51 @@ const sendFrenchCourseEmail = async (enrollment, paymentId) => {
   }
 };
 
+// Send PYQs book confirmation with login details
+const sendPyqsEmail = async (purchase, paymentId) => {
+  try {
+    const admin = await User.findOne({ role: 'admin' });
+    const siteLink = process.env.PYQS_WEBSITE_LINK || 'https://elite-academy-pyqs-book';
+
+    const userHtml = `
+      <div style="font-family: Arial, sans-serif; max-width:600px;margin:0 auto;padding:16px;background:#f8fafc;">
+        <div style="background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);padding:20px;border-radius:8px;color:#fff;text-align:center;">
+          <h1>📘 Your PYQs Book Access</h1>
+        </div>
+        <div style="background:#fff;padding:18px;border-radius:8px;margin-top:12px;">
+          <p>Dear <strong>${purchase.fullName}</strong>,</p>
+          <p>✅ Payment received. You can access the PYQs book at <a href="${siteLink}">${siteLink}</a></p>
+          <p><strong>Login Credentials</strong></p>
+          <p>Email: ${purchase.email}</p>
+          <p>Password: ${purchase.appPassword}</p>
+          <p style="color:#6b7280;margin-top:12px;font-size:13px;">After Payment, details will be sent to your email within 5 minutes. Please check inbox and spam. Call 7696954686 for support.</p>
+          <p style="margin-top:14px">Best regards,<br/>Elite Academy Team</p>
+        </div>
+      </div>
+    `;
+
+    const adminHtml = `
+      <div style="font-family: Arial, sans-serif; max-width:600px;margin:0 auto;padding:16px;">
+        <h3>New PYQs Purchase</h3>
+        <p><strong>Name:</strong> ${purchase.fullName}</p>
+        <p><strong>Email:</strong> ${purchase.email}</p>
+        <p><strong>Mobile:</strong> ${purchase.mobile}</p>
+        <p><strong>Amount:</strong> ₹${purchase.amount}</p>
+        <p><strong>Payment ID:</strong> ${paymentId}</p>
+      </div>
+    `;
+
+    await Promise.all([
+      sendEmail({ to: purchase.email, subject: '📘 PYQs Book - Access Details', html: userHtml }),
+      admin && admin.email ? sendEmail({ to: admin.email, subject: `New PYQs Purchase - ${purchase.fullName}`, html: adminHtml }) : Promise.resolve()
+    ]);
+    console.log('PYQs emails sent');
+  } catch (err) {
+    console.error('Error sending PYQs email', err);
+    throw err;
+  }
+};
+
 // CORRECT EXPORT
 module.exports = {
   sendEmail,
@@ -1853,4 +1898,5 @@ module.exports = {
   sendExciseInspectorEmail,
   sendJobApplicationEmail,
   sendFrenchCourseEmail,
+  sendPyqsEmail,
 };

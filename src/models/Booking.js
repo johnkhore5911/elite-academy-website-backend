@@ -4,10 +4,12 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
+    // Allow guest bookings by making userFirebaseUid optional
     userFirebaseUid: {  // Changed from userId
       type: String,     // Changed from ObjectId to String
-      required: true,
+      required: false,
       index: true,
+      default: null,
     },
     slotId: {
       type: mongoose.Schema.Types.ObjectId,  // Keep this as ObjectId

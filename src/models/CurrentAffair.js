@@ -5,8 +5,9 @@ const currentAffairSchema = new mongoose.Schema(
   {
     userFirebaseUid: {
       type: String,
-      required: true,
+      required: false,
       index: true,
+      default: null,
     },
     userName: {
       type: String,

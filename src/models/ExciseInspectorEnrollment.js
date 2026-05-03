@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const ExciseInspectorEnrollmentSchema = new mongoose.Schema(
   {
-    userFirebaseUid: { type: String, required: true, index: true },
+    userFirebaseUid: { type: String, required: false, index: true, default: null },
     fullName: { type: String, required: true },
     email: { type: String, required: true },
     mobile: { type: String, required: true },

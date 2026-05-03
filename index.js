@@ -59,6 +59,7 @@ app.use("/api/cron", require("./src/routes/cronRoutes"));
 app.use("/api/typing", require("./src/routes/typingRoutes"));
 app.use("/api/polity", require("./src/routes/polityRoutes"));
 app.use("/api/books", require("./src/routes/bookRoutes")); 
+app.use("/api/pyqs", require("./src/routes/pyqsRoutes"));
 app.use("/api/monthly-current-affairs", require("./src/routes/monthlyCurrentAffairRoutes"));
 app.use("/api/admin/monthly-current-affairs", require("./src/routes/adminMonthlyCurrentAffairRoutes"));
 app.use("/api/coaching", require("./src/routes/coachingRoutes")); 

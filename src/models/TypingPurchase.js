@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 const typingPurchaseSchema = new mongoose.Schema({
   userFirebaseUid: {
     type: String,
-    required: true,
+    required: false,
+    default: null,
   },
   userName: {
     type: String,

@@ -12,11 +12,12 @@ const TypingPurchase = require("../models/TypingPurchase");
 const PolityPurchase = require("../models/PolityPurchase");
 const BookPurchase = require("../models/BookPurchase");
 const { PackageType } = require("../models/BookPurchase");
-const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail, sendJobApplicationEmail, sendFrenchCourseEmail } = require("../utils/email");
+const { sendBookEmail, sendPackageEmail,sendCoachingEmail, sendCrashCourseEmail, sendPstetEmail, sendExciseInspectorEmail, sendJobApplicationEmail, sendFrenchCourseEmail, sendPyqsEmail } = require("../utils/email");
 const { BOOK_INFO, PACKAGE_INFO } = require('./bookController');
 const CurrentAffair = require("../models/CurrentAffair");
 const CoachingEnrollment = require("../models/CoachingEnrollment");
 const CrashCourse = require("../models/CrashCourse");
+const PyqsPurchase = require("../models/PyqsPurchase");
 const WeeklyTestSeries = require("../models/WeeklyTestSeries");
 const SectionalTestSeries = require("../models/SectionalTestSeries");
 const { sendWeeklyTestSeriesEnrollmentEmail } = require("../utils/email");
@@ -132,6 +133,9 @@ const handleRazorpayWebhook = async (req, res) => {
   orderDetails?.notes?.type === "polity_purchase" ||
   (await PolityPurchase.findOne({ razorpayOrderId: orderId }));
 
+    const isPyqsPurchase = orderDetails?.notes?.purchaseType === "pyqs_book" ||
+                           (await PyqsPurchase.findOne({ razorpayOrderId: orderId }));
+
 
   const isBookPurchase = orderDetails?.notes?.purchaseType === "book" ||
   orderDetails?.notes?.purchaseType === "package" ||
@@ -166,6 +170,11 @@ const handleRazorpayWebhook = async (req, res) => {
 
   if (orderDetails?.notes.purchaseType === "french_course") {
     await handleFrenchCoursePayment(paymentEntity, paymentEntity.id);
+    return res.json({ status: "ok" });
+  }
+
+  if (orderDetails?.notes.purchaseType === "pyqs_book") {
+    await handlePyqsPayment(paymentEntity, paymentEntity.id);
     return res.json({ status: "ok" });
   }
 
@@ -2183,6 +2192,42 @@ async function handleFrenchCoursePayment(paymentEntity, paymentId) {
     console.log(`French course enrollment confirmed for ${enrollment.email}`);
   } catch (error) {
     console.error("Error handling French course payment:", error);
+    throw error;
+  }
+}
+
+// Handle PYQs Book Payment Success
+async function handlePyqsPayment(paymentEntity, paymentId) {
+  try {
+    const orderId = paymentEntity.order_id;
+    const purchase = await PyqsPurchase.findOne({ razorpayOrderId: orderId });
+
+    if (!purchase) {
+      console.warn('PYQS purchase not found for order:', orderId);
+      return;
+    }
+
+    if (purchase.status === 'confirmed') {
+      console.log('PYQS purchase already confirmed:', purchase._id);
+      return;
+    }
+
+    purchase.status = 'confirmed';
+    purchase.razorpayPaymentId = paymentId;
+    purchase.expiresAt = null;
+    await purchase.save();
+
+    // Send confirmation email with login details
+    try {
+      await sendPyqsEmail(purchase, paymentId);
+      console.log('📧 PYQS confirmation emails sent');
+    } catch (emailErr) {
+      console.error('❌ Error sending PYQS emails:', emailErr);
+    }
+
+    console.log(`✅ PYQS purchase confirmed for ${purchase.email}`);
+  } catch (error) {
+    console.error('Error handling PYQS payment:', error);
     throw error;
   }
 }

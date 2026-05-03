@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const coachingEnrollmentSchema = new mongoose.Schema(
   {
-    userFirebaseUid: { type: String, required: true, index: true },
+    // Make userFirebaseUid optional so guest enrollments are allowed
+    userFirebaseUid: { type: String, required: false, index: true, default: null },
     fullName: { type: String, required: true },
     email: { type: String, required: true },
     fatherName: { type: String, required: true },
