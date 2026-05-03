@@ -1,6 +1,7 @@
 // src/controllers/authController.js
 
 const User = require("../models/User");
+const PyqsPurchase = require("../models/PyqsPurchase");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -210,8 +211,80 @@ const manualLogin = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/auth/pyqs-login
+ * PYQs book login with email and appPassword (authenticates against PyqsPurchase)
+ */
+const pyqsLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
+    }
+
+    // Find purchase by email and confirmed status
+    const purchase = await PyqsPurchase.findOne({
+      email: email.toLowerCase(),
+      status: 'confirmed'
+    });
+
+    if (!purchase) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password, or purchase not confirmed"
+      });
+    }
+
+    // Compare plain text passwords (as per model comment, passwords are stored in plain text)
+    if (purchase.appPassword !== password) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        purchaseId: purchase._id.toString(),
+        email: purchase.email,
+        fullName: purchase.fullName,
+        isPyqsAuth: true
+      },
+      process.env.JWT_SECRET || 'Im12@khorejohn',
+      { expiresIn: '30d' } // 30 days to minimize backend calls
+    );
+
+    console.log('✅ PYQs user logged in:', {
+      purchaseId: purchase._id,
+      email: purchase.email,
+      fullName: purchase.fullName
+    });
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: purchase._id.toString(),
+        email: purchase.email,
+        fullName: purchase.fullName,
+      },
+    });
+  } catch (err) {
+    console.error('❌ Error in PYQs login:', err);
+    next(err);
+  }
+};
+
 module.exports = {
   syncUser,
   manualSignup,
   manualLogin,
+  pyqsLogin,
 };

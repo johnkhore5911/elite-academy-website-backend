@@ -2,6 +2,7 @@
 
 const admin = require("../config/firebase-admin");
 const User = require("../models/User");
+const PyqsPurchase = require("../models/PyqsPurchase");
 const jwt = require("jsonwebtoken");
 
 /**
@@ -45,22 +46,40 @@ const auth = async (req, res, next) => {
     }
 
     if (isManualAuth) {
-      // Manual auth - user is in MongoDB with _id
-      const user = await User.findById(decoded.userId);
-      
-      if (!user) {
-        console.error("❌ User not found in MongoDB:", decoded.userId);
-        return res.status(401).json({ error: "User not found" });
-      }
+      // Check if this is a PYQs auth token
+      if (decoded.isPyqsAuth) {
+        const purchase = await PyqsPurchase.findById(decoded.purchaseId);
 
-      req.user = {
-        id: user._id.toString(), // MongoDB ID for manual auth
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        isManualAuth: true
-      };
-      console.log('✅ Manual auth user set:', req.user.email);
+        if (!purchase || purchase.status !== 'confirmed') {
+          console.error("❌ PYQs purchase not found or not confirmed:", decoded.purchaseId);
+          return res.status(401).json({ error: "Purchase not found or not confirmed" });
+        }
+
+        req.user = {
+          id: purchase._id.toString(),
+          email: purchase.email,
+          name: purchase.fullName,
+          isPyqsAuth: true
+        };
+        console.log('✅ PYQs auth user set:', req.user.email);
+      } else {
+        // Manual auth - user is in MongoDB with _id
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+          console.error("❌ User not found in MongoDB:", decoded.userId);
+          return res.status(401).json({ error: "User not found" });
+        }
+
+        req.user = {
+          id: user._id.toString(), // MongoDB ID for manual auth
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          isManualAuth: true
+        };
+        console.log('✅ Manual auth user set:', req.user.email);
+      }
     } else {
       // Firebase auth
       // Check if user already exists in MongoDB
