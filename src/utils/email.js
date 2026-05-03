@@ -1842,21 +1842,43 @@ const sendFrenchCourseEmail = async (enrollment, paymentId) => {
 const sendPyqsEmail = async (purchase, paymentId) => {
   try {
     const admin = await User.findOne({ role: 'admin' });
-    const siteLink = process.env.PYQS_WEBSITE_LINK || 'https://elite-academy-pyqs-book';
+    const siteLink = process.env.PYQS_WEBSITE_LINK || 'https://elite-academy-pyqs-ebooks.vercel.app';
+    const whatsappLink = process.env.EXCISE_INSPECTOR_WHATSAPP_LINK || 'https://chat.whatsapp.com/K5QXPcLBC8aCE62BGerXoK';
 
     const userHtml = `
       <div style="font-family: Arial, sans-serif; max-width:600px;margin:0 auto;padding:16px;background:#f8fafc;">
-        <div style="background:linear-gradient(135deg,#f97316 0%,#dc2626 100%);padding:20px;border-radius:8px;color:#fff;text-align:center;">
-          <h1>📘 Your PYQs Book Access</h1>
+        <div style="background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);padding:24px;border-radius:12px;color:#fff;text-align:center;">
+          <h1 style="margin:0;font-size:26px;">📘 PYQs E-Book Access</h1>
+          <p style="margin:8px 0 0 0;opacity:0.9;">Your purchase is confirmed!</p>
         </div>
-        <div style="background:#fff;padding:18px;border-radius:8px;margin-top:12px;">
-          <p>Dear <strong>${purchase.fullName}</strong>,</p>
-          <p>✅ Payment received. You can access the PYQs book at <a href="${siteLink}">${siteLink}</a></p>
-          <p><strong>Login Credentials</strong></p>
-          <p>Email: ${purchase.email}</p>
-          <p>Password: ${purchase.appPassword}</p>
-          <p style="color:#6b7280;margin-top:12px;font-size:13px;">After Payment, details will be sent to your email within 5 minutes. Please check inbox and spam. Call 7696954686 for support.</p>
-          <p style="margin-top:14px">Best regards,<br/>Elite Academy Team</p>
+
+        <div style="background:#fff;padding:24px;border-radius:12px;margin-top:16px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <p style="font-size:16px;margin-bottom:20px;">Dear <strong>${purchase.fullName}</strong>,</p>
+
+          <div style="background:#ecfdf5;border:2px solid #10b981;border-radius:10px;padding:20px;margin:20px 0;">
+            <h3 style="color:#065f46;margin:0 0 15px 0;font-size:18px;">🔐 Your Login Credentials</h3>
+            <p style="margin:8px 0;font-size:15px;"><strong>Email:</strong> <span style="background:#fff;padding:4px 8px;border-radius:4px;font-family:monospace;color:#374151;">${purchase.email}</span></p>
+            <p style="margin:8px 0;font-size:15px;"><strong>Password:</strong> <span style="background:#fff;padding:4px 8px;border-radius:4px;font-family:monospace;color:#374151;">${purchase.appPassword}</span></p>
+            <p style="color:#059669;font-size:13px;margin-top:12px;">⚠️ Save these details! You'll need them to access your E-Book.</p>
+          </div>
+
+          <div style="text-align:center;margin:25px 0;">
+            <a href="${siteLink}" style="display:inline-block;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:10px;font-weight:bold;font-size:16px;box-shadow:0 4px 12px rgba(16,185,129,0.3);">📖 Open Website</a>
+          </div>
+
+          <p style="color:#6b7280;font-size:13px;text-align:center;margin:10px 0;">If the button doesn't work, copy this link:</p>
+          <p style="background:#f3f4f6;padding:10px;border-radius:6px;font-size:12px;word-break:break-all;text-align:center;color:#374151;margin:0;">${siteLink}</p>
+
+          <div style="background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;padding:16px;margin-top:24px;">
+            <h4 style="color:#166534;margin:0 0 10px 0;font-size:15px;">📱 Join Our WhatsApp Community</h4>
+            <p style="color:#374151;font-size:14px;margin:0 0 12px 0;">Get every Sunday Google Meet link and stay updated with the community!</p>
+            <a href="${whatsappLink}" style="display:inline-block;background:#22c55e;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:bold;font-size:14px;">Join WhatsApp Group →</a>
+            <p style="color:#6b7280;font-size:12px;margin-top:8px;">Direct link: ${whatsappLink}</p>
+          </div>
+
+          <p style="color:#6b7280;margin-top:20px;font-size:13px;border-top:1px solid #e5e7eb;padding-top:16px;">💡 <strong>Tip:</strong> Check your spam folder if you don't see this email in your inbox. For support, call <strong>7696954686</strong></p>
+
+          <p style="margin-top:20px;color:#374151;">Best regards,<br/><strong>Elite Academy Team</strong></p>
         </div>
       </div>
     `;
