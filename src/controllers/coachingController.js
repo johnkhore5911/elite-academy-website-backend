@@ -112,9 +112,9 @@ exports.checkAccess = async (req, res) => {
       });
     }
 
-    // Find enrollment with confirmed status for the given email
+    // Find enrollment with confirmed status for the given email (case-insensitive)
     const confirmedEnrollment = await CoachingEnrollment.findOne({
-      email: email,
+      email: { $regex: new RegExp(`^${email}$`, 'i') },
       status: "confirmed"
     });
     console.log("Found confirmed enrollment:", confirmedEnrollment);
