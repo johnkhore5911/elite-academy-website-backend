@@ -1844,41 +1844,62 @@ const sendPyqsEmail = async (purchase, paymentId) => {
     const admin = await User.findOne({ role: 'admin' });
     const siteLink = process.env.PYQS_WEBSITE_LINK || 'https://elite-academy-pyqs-ebooks.vercel.app';
     const whatsappLink = process.env.EXCISE_INSPECTOR_WHATSAPP_LINK || 'https://chat.whatsapp.com/K5QXPcLBC8aCE62BGerXoK';
+    const playStoreLink = 'https://play.google.com/store/apps/details?id=com.johnnykhore.eliteacademy';
+    const appStoreLink = 'https://apps.apple.com/in/app/elite-academy-mock-tests/id6746954938';
 
     const userHtml = `
-      <div style="font-family: Arial, sans-serif; max-width:600px;margin:0 auto;padding:16px;background:#f8fafc;">
-        <div style="background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);padding:24px;border-radius:12px;color:#fff;text-align:center;">
-          <h1 style="margin:0;font-size:26px;">📘 PYQs E-Book Access</h1>
-          <p style="margin:8px 0 0 0;opacity:0.9;">Your purchase is confirmed!</p>
+      <div style="font-family: Arial, sans-serif; max-width:640px; margin:0 auto; padding:16px; background:#f8fafc;">
+        <div style="background:linear-gradient(135deg,#0f766e 0%,#2563eb 100%); padding:28px 24px; border-radius:16px 16px 0 0; color:#fff; text-align:center;">
+          <div style="display:inline-block; background:rgba(255,255,255,0.16); padding:8px 14px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:0.3px; margin-bottom:14px;">PAYMENT CONFIRMED</div>
+          <h1 style="margin:0; font-size:28px; line-height:1.2;">Your Excise Inspector Mock Test is Activated</h1>
+          <p style="margin:10px 0 0 0; font-size:15px; opacity:0.95; line-height:1.5;">You now have free access to the <strong>₹500 Excise Inspector Mock Test</strong>.</p>
         </div>
 
-        <div style="background:#fff;padding:24px;border-radius:12px;margin-top:16px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-          <p style="font-size:16px;margin-bottom:20px;">Dear <strong>${purchase.fullName}</strong>,</p>
+        <div style="background:#ffffff; padding:24px; border-radius:0 0 16px 16px; box-shadow:0 8px 24px rgba(15,23,42,0.08); border:1px solid #e5e7eb; border-top:none;">
+          <p style="font-size:16px; color:#0f172a; margin:0 0 16px 0;">Hi <strong>${purchase.fullName}</strong>,</p>
+          <p style="font-size:15px; color:#334155; line-height:1.7; margin:0 0 20px 0;">Your payment has been received successfully. To start using your course, please follow the steps below exactly with the same email address used for this purchase.</p>
 
-          <div style="background:#ecfdf5;border:2px solid #10b981;border-radius:10px;padding:20px;margin:20px 0;">
-            <h3 style="color:#065f46;margin:0 0 15px 0;font-size:18px;">🔐 Your Login Credentials</h3>
-            <p style="margin:8px 0;font-size:15px;"><strong>Email:</strong> <span style="background:#fff;padding:4px 8px;border-radius:4px;font-family:monospace;color:#374151;">${purchase.email}</span></p>
-            <p style="margin:8px 0;font-size:15px;"><strong>Password:</strong> <span style="background:#fff;padding:4px 8px;border-radius:4px;font-family:monospace;color:#374151;">${purchase.appPassword}</span></p>
-            <p style="color:#059669;font-size:13px;margin-top:12px;">⚠️ Save these details! You'll need them to access your E-Book.</p>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:14px; padding:18px; margin:20px 0;">
+            <div style="font-size:16px; font-weight:700; color:#1d4ed8; margin-bottom:10px;">Step 1: Download the Elite Academy app</div>
+            <p style="margin:0 0 12px 0; color:#334155; font-size:14px; line-height:1.6;">Install the app from either store so you can access your mock test on mobile.</p>
+            <div style="display:block; margin-bottom:10px;">
+              <a href="${playStoreLink}" style="display:block; background:#16a34a; color:#fff; text-decoration:none; padding:12px 16px; border-radius:10px; font-weight:700; text-align:center; margin-bottom:10px;">Download on Google Play</a>
+              <a href="${appStoreLink}" style="display:block; background:#111827; color:#fff; text-decoration:none; padding:12px 16px; border-radius:10px; font-weight:700; text-align:center;">Download on the App Store</a>
+            </div>
+            <p style="margin:10px 0 0 0; font-size:12px; color:#64748b; word-break:break-all;">Google Play: ${playStoreLink}</p>
+            <p style="margin:6px 0 0 0; font-size:12px; color:#64748b; word-break:break-all;">App Store: ${appStoreLink}</p>
           </div>
 
-          <div style="text-align:center;margin:25px 0;">
-            <a href="${siteLink}" style="display:inline-block;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);color:#fff;text-decoration:none;padding:16px 40px;border-radius:10px;font-weight:bold;font-size:16px;box-shadow:0 4px 12px rgba(16,185,129,0.3);">📖 Open Website</a>
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:14px; padding:18px; margin:20px 0;">
+            <div style="font-size:16px; font-weight:700; color:#047857; margin-bottom:10px;">Step 2: Create an account or log in with this email</div>
+            <p style="margin:0 0 10px 0; color:#334155; font-size:14px; line-height:1.6;">Use the same email address you used for payment. Access will only be shown for this email.</p>
+            <div style="background:#fff; border:1px solid #d1fae5; border-radius:10px; padding:12px; font-family:monospace; font-size:14px; color:#065f46; word-break:break-all;">
+              ${purchase.email}
+            </div>
+            <p style="margin:10px 0 0 0; color:#64748b; font-size:12px; line-height:1.5;">If you already have an account, please log in with the same email. If not, create a new account using this email only.</p>
           </div>
 
-          <p style="color:#6b7280;font-size:13px;text-align:center;margin:10px 0;">If the button doesn't work, copy this link:</p>
-          <p style="background:#f3f4f6;padding:10px;border-radius:6px;font-size:12px;word-break:break-all;text-align:center;color:#374151;margin:0;">${siteLink}</p>
-
-          <div style="background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;padding:16px;margin-top:24px;">
-            <h4 style="color:#166534;margin:0 0 10px 0;font-size:15px;">📱 Join Our WhatsApp Community</h4>
-            <p style="color:#374151;font-size:14px;margin:0 0 12px 0;">Get every Sunday Google Meet link and stay updated with the community!</p>
-            <a href="${whatsappLink}" style="display:inline-block;background:#22c55e;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:bold;font-size:14px;">Join WhatsApp Group →</a>
-            <p style="color:#6b7280;font-size:12px;margin-top:8px;">Direct link: ${whatsappLink}</p>
+          <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:14px; padding:18px; margin:20px 0;">
+            <div style="font-size:16px; font-weight:700; color:#c2410c; margin-bottom:10px;">Step 3: Open Courses and start learning</div>
+            <p style="margin:0 0 10px 0; color:#334155; font-size:14px; line-height:1.6;">After login, go to <strong>Courses</strong> and find <strong>Excise Inspector Mock test</strong>. You will see it marked as <strong>Accessed</strong>, and you can start the mock test directly.</p>
+            <div style="background:#fff; border:1px solid #fdba74; border-radius:10px; padding:12px; margin-top:12px;">
+              <a href="${siteLink}" style="color:#ea580c; font-weight:700; text-decoration:none; word-break:break-all;">Open website: ${siteLink}</a>
+            </div>
+            <p style="margin:10px 0 0 0; color:#64748b; font-size:12px; line-height:1.5;">You can also visit the website from your browser, sign in with the same email, and then open the course.</p>
           </div>
 
-          <p style="color:#6b7280;margin-top:20px;font-size:13px;border-top:1px solid #e5e7eb;padding-top:16px;">💡 <strong>Tip:</strong> Check your spam folder if you don't see this email in your inbox. For support, call <strong>7696954686</strong></p>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:18px; margin:20px 0;">
+            <div style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:8px;">Need help?</div>
+            <p style="margin:0; color:#475569; font-size:14px; line-height:1.7;">For any issue, call <strong>7696954686</strong>. If you face login problems, please make sure the email used in the app is exactly the same as the one used for payment.</p>
+          </div>
 
-          <p style="margin-top:20px;color:#374151;">Best regards,<br/><strong>Elite Academy Team</strong></p>
+          <div style="text-align:center; margin-top:22px;">
+            <a href="${siteLink}" style="display:inline-block; background:linear-gradient(135deg,#0f766e 0%,#2563eb 100%); color:#fff; text-decoration:none; padding:14px 28px; border-radius:10px; font-weight:700; font-size:15px;">Open Elite Academy Website</a>
+          </div>
+
+          <p style="margin-top:22px; color:#64748b; font-size:13px; line-height:1.6; text-align:center;">Thank you for choosing Elite Academy. Your access is ready.</p>
+
+          <p style="margin:18px 0 0 0; color:#0f172a; font-size:14px;">Best regards,<br><strong>Elite Academy Team</strong></p>
         </div>
       </div>
     `;

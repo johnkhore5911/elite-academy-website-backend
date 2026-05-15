@@ -54,10 +54,24 @@ exports.createOrder = async (req, res) => {
 exports.checkAccess = async (req, res) => {
   try {
     const { email } = req.query;
-    if (!email) return res.status(400).json({ hasAccess: false });
-    const purchase = await PyqsPurchase.findOne({ email: email.toLowerCase(), status: 'confirmed' });
-    res.json({ hasAccess: !!purchase });
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      return res.status(400).json({ success: false, hasAccess: false, message: 'email query is required' });
+    }
+
+    const purchase = await PyqsPurchase.findOne({
+      email: normalizedEmail,
+      status: 'confirmed'
+    }).select('_id email status updatedAt');
+
+    res.json({
+      success: true,
+      hasAccess: !!purchase,
+      email: normalizedEmail
+    });
   } catch (err) {
-    res.status(500).json({ hasAccess: false });
+    console.error('Error checking pyqs access:', err);
+    res.status(500).json({ success: false, hasAccess: false });
   }
 };
